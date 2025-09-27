@@ -6,6 +6,11 @@ const nextConfig = {
   experimental: {
     esmExternals: 'loose'
   },
+  // Environment variables to disable analytics
+  env: {
+    NEXT_PUBLIC_CB_ANALYTICS_ENABLED: 'false',
+    NEXT_PUBLIC_COINBASE_WALLET_TELEMETRY_DISABLED: 'true',
+  },
   webpack: (config, { isServer, webpack }) => {
     if (!isServer) {
       // Client-side configuration
@@ -25,6 +30,13 @@ const nextConfig = {
         'assert': require.resolve('assert/'),
         'os': require.resolve('os-browserify/browser'),
         'path': require.resolve('path-browserify'),
+      }
+
+      // Add specific handling for Coinbase SDK analytics modules
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        // Disable problematic analytics modules
+        '@coinbase/wallet-sdk/dist/provider/CoinbaseWalletProvider': false,
       }
     }
 

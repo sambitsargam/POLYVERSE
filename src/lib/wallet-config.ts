@@ -47,19 +47,22 @@ const filecoinCalibrationTestnet = {
   testnet: true,
 } as const;
 
+// Define chains array
+const chains = [
+  filecoinCalibrationTestnet,
+  filecoinMainnet,
+  mainnet, 
+  polygon, 
+  optimism, 
+  arbitrum, 
+  base,
+  sepolia,
+  polygonMumbai
+] as const;
+
 export const config = getDefaultConfig({
   appName: 'Polyverse Creator Storefront',
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'fcd3420b61e039382c67c578b42abe70',
-  chains: [
-    filecoinCalibrationTestnet,
-    filecoinMainnet,
-    mainnet, 
-    polygon, 
-    optimism, 
-    arbitrum, 
-    base,
-    sepolia,
-    polygonMumbai
-  ],
+  chains,
   ssr: true,
 });

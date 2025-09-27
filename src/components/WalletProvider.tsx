@@ -12,12 +12,14 @@ import '@rainbow-me/rainbowkit/styles.css';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes - longer cache time
-      gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
-      retry: 1, // Reduce retries to prevent connection spam
+      staleTime: 10 * 60 * 1000, // 10 minutes - longer cache time
+      gcTime: 30 * 60 * 1000, // 30 minutes garbage collection
+      retry: 0, // Disable retries to prevent connection spam
       refetchOnWindowFocus: false, // Don't refetch on tab focus (key fix!)
       refetchOnMount: false, // Don't refetch on component mount
       refetchInterval: false, // Disable auto refetch
+      refetchIntervalInBackground: false, // Disable background refetch
+      refetchOnReconnect: false, // Don't refetch on network reconnect
     },
   },
 });

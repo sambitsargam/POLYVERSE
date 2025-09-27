@@ -1,18 +1,34 @@
 'use client';
 
 import { createWalletClient, http, parseUnits, type Address } from 'viem';
-import { polygon, polygonMumbai } from 'viem/chains';
+import { polygon } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
-import { wrapFetchWithPayment } from 'x402-fetch';
 
-// X402 Configuration for Polygon
+// Define Polygon Amoy chain (from x402 repository)
+const polygonAmoy = {
+  id: 80002,
+  name: 'Polygon Amoy',
+  network: 'polygon-amoy',
+  nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
+  rpcUrls: { 
+    default: { http: ['https://rpc-amoy.polygon.technology'] },
+    public: { http: ['https://rpc-amoy.polygon.technology'] }
+  },
+  blockExplorers: { 
+    default: { name: 'PolygonScan', url: 'https://amoy.polygonscan.com' } 
+  },
+  testnet: true,
+} as const;
+
+// X402 Configuration with real addresses from the x402 repository
 const X402_CONFIG = {
   FACILITATOR_URL: process.env.NEXT_PUBLIC_X402_FACILITATOR_URL || 'https://x402.org/facilitator',
   POLYGON_RPC: process.env.NEXT_PUBLIC_POLYGON_RPC || 'https://polygon-rpc.com',
-  MUMBAI_RPC: process.env.NEXT_PUBLIC_MUMBAI_RPC || 'https://rpc-mumbai.maticvigil.com',
-  USDC_POLYGON: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC on Polygon
-  USDC_MUMBAI: '0xfe4f5145f6e09952a5ba9e956ed0c25e3fa4c7f1', // USDC on Amoy testnet
-  RECIPIENT_ADDRESS: '0xF846d2747D1cb33635Cc66dD6D513d85Cb830f13', // Your wallet address
+  AMOY_RPC: process.env.NEXT_PUBLIC_AMOY_RPC || 'https://rpc-amoy.polygon.technology',
+  // Real USDC addresses from x402 documentation
+  USDC_POLYGON: '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359', // USDC on Polygon mainnet
+  USDC_AMOY: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582', // USDC on Polygon Amoy testnet
+  RECIPIENT_ADDRESS: process.env.NEXT_PUBLIC_RECIPIENT_ADDRESS || '0xF846d2747D1cb33635Cc66dD6D513d85Cb830f13',
 };
 
 // Subscription Plans Configuration
@@ -88,18 +104,16 @@ interface ActiveSubscription {
 
 class X402SubscriptionService {
   private walletClient: any;
-  private fetchWithPay: any;
 
   constructor(privateKey?: string) {
     if (privateKey && typeof window === 'undefined') {
-      // Server-side initialization
+      // Server-side initialization with Polygon Amoy
       const account = privateKeyToAccount(privateKey as `0x${string}`);
       this.walletClient = createWalletClient({
         account,
-        transport: http(X402_CONFIG.MUMBAI_RPC),
-        chain: polygonMumbai,
+        transport: http(X402_CONFIG.AMOY_RPC),
+        chain: polygonAmoy,
       });
-      this.fetchWithPay = wrapFetchWithPayment(fetch, this.walletClient);
     }
   }
 
@@ -108,15 +122,14 @@ class X402SubscriptionService {
    */
   async initializeClientWallet(walletClient: any) {
     this.walletClient = walletClient;
-    this.fetchWithPay = wrapFetchWithPayment(fetch, walletClient);
   }
 
   /**
-   * Create payment requirements for subscription
+   * Create x402 payment requirements following the official specification
    */
   createPaymentRequirements(plan: SubscriptionPlan) {
     const network = plan.network === 'polygon' ? 'polygon' : 'polygon-amoy';
-    const usdcAddress = plan.network === 'polygon' ? X402_CONFIG.USDC_POLYGON : X402_CONFIG.USDC_MUMBAI;
+    const usdcAddress = plan.network === 'polygon' ? X402_CONFIG.USDC_POLYGON : X402_CONFIG.USDC_AMOY;
     
     // Convert USD to USDC atomic units (6 decimals for USDC)
     const amountUsdc = parseUnits(plan.price.toString(), 6);
@@ -141,95 +154,102 @@ class X402SubscriptionService {
   }
 
   /**
-   * Purchase subscription using x402 (mock implementation for demo)
+   * Purchase subscription using x402 protocol (needs proper client implementation)
    */
-  async purchaseSubscription(plan: SubscriptionPlan): Promise<{ success: boolean; txHash?: string; error?: string }> {
+  async purchaseSubscription(plan: SubscriptionPlan, walletClient?: any): Promise<{ success: boolean; txHash?: string; error?: string }> {
     try {
-      // Mock x402 payment flow
-      const response = await fetch(`/api/subscriptions/purchase`, {
+      // Use provided wallet client or default
+      const client = walletClient || this.walletClient;
+      if (!client) {
+        return { success: false, error: 'Wallet not connected' };
+      }
+
+      // Create x402-compliant payment requirements
+      const paymentRequirements = this.createPaymentRequirements(plan);
+      console.log('x402 Payment Requirements (Polygon Amoy):', paymentRequirements);
+
+      // Step 1: Make initial request (should return 402)
+      const response = await fetch('/api/subscriptions/purchase', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-PAYMENT': 'mock-payment-authorization', // Mock payment header
         },
         body: JSON.stringify({
           planId: plan.id,
-          paymentRequirements: this.createPaymentRequirements(plan),
+          paymentRequirements,
         }),
       });
 
       if (response.status === 402) {
-        // Payment required - normal x402 flow
+        // This is the expected x402 flow
         const paymentData = await response.json();
-        console.log('Payment required (demo):', paymentData);
+        console.log('x402 Payment Required (Polygon Amoy):', paymentData);
+
+        // TODO: Implement real x402 client integration
+        // This should:
+        // 1. Create payment header using x402 client libraries
+        // 2. Sign EIP-3009 TransferWithAuthorization with user's wallet
+        // 3. Send X-PAYMENT header back to the API
+        // 4. API verifies with facilitator and settles on-chain
         
-        // For demo purposes, simulate successful payment after showing 402
-        const mockSuccessResponse = await fetch(`/api/subscriptions/purchase`, {
+        // For demonstration, simulate successful payment
+        const mockResponse = await fetch('/api/subscriptions/purchase', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-PAYMENT': `mock-signed-payment-${Date.now()}`,
+            'X-PAYMENT': 'demo-signed-payment-header', // Mock header
           },
           body: JSON.stringify({
             planId: plan.id,
-            paymentRequirements: this.createPaymentRequirements(plan),
+            paymentRequirements,
           }),
         });
 
-        if (mockSuccessResponse.ok) {
-          const data = await mockSuccessResponse.json();
+        if (mockResponse.ok) {
+          const data = await mockResponse.json();
           
+          // Extract transaction hash from X-PAYMENT-RESPONSE header
+          const paymentResponse = mockResponse.headers.get('X-PAYMENT-RESPONSE');
+          let txHash = data.txHash;
+          
+          if (paymentResponse) {
+            try {
+              const decodedResponse = JSON.parse(atob(paymentResponse));
+              txHash = decodedResponse.transaction;
+              console.log('x402 Settlement Transaction (Polygon Amoy):', txHash);
+            } catch (e) {
+              console.warn('Could not parse X-PAYMENT-RESPONSE header');
+            }
+          }
+
           // Store subscription locally
           this.storeSubscription({
             planId: plan.id,
             startTime: Math.floor(Date.now() / 1000),
             endTime: Math.floor(Date.now() / 1000) + plan.duration,
-            txHash: data.txHash || 'mock-tx-hash',
+            txHash: txHash || `amoy-demo-${Date.now()}`,
             network: plan.network,
             isActive: true,
           });
 
-          return { success: true, txHash: data.txHash };
+          return { success: true, txHash };
         }
         
-        return { success: false, error: 'Mock payment processing failed' };
+        return { success: false, error: 'x402 payment verification failed' };
       }
 
       if (response.ok) {
+        // Unexpected success without payment - should not happen in x402
         const data = await response.json();
-        
-        // Extract transaction hash
-        const paymentResponse = response.headers.get('X-PAYMENT-RESPONSE');
-        let txHash = data.txHash;
-        
-        if (paymentResponse) {
-          try {
-            const decodedResponse = JSON.parse(atob(paymentResponse));
-            txHash = decodedResponse.transaction;
-          } catch (e) {
-            console.warn('Could not parse payment response header');
-          }
-        }
-
-        // Store subscription locally
-        this.storeSubscription({
-          planId: plan.id,
-          startTime: Math.floor(Date.now() / 1000),
-          endTime: Math.floor(Date.now() / 1000) + plan.duration,
-          txHash: txHash || 'demo-tx-hash',
-          network: plan.network,
-          isActive: true,
-        });
-
-        return { success: true, txHash };
+        return { success: true, txHash: data.txHash };
       }
 
       const errorData = await response.json();
-      return { success: false, error: errorData.error || 'Payment failed' };
+      return { success: false, error: errorData.error || 'x402 payment processing failed' };
 
     } catch (error: any) {
-      console.error('Subscription purchase error:', error);
-      return { success: false, error: error.message || 'Failed to process payment' };
+      console.error('x402 Subscription purchase error:', error);
+      return { success: false, error: error.message || 'Failed to process x402 payment' };
     }
   }
 
