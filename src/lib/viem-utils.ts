@@ -27,12 +27,12 @@ export async function getSigner(walletClient: WalletClient | undefined): Promise
       throw new Error('No ethereum provider found')
     }
 
-    // Create ethers Web3Provider from the ethereum provider (ethers v5)
-    const provider = new ethers.providers.Web3Provider(ethereum)
+    // Create ethers BrowserProvider from the ethereum provider (ethers v6)
+    const provider = new ethers.BrowserProvider(ethereum)
     console.log('✅ Created ethers provider')
 
     // Get the signer from the provider
-    const signer = provider.getSigner()
+    const signer = await provider.getSigner()
     console.log('✅ Created ethers signer:', await signer.getAddress())
 
     return signer
