@@ -1,0 +1,98 @@
+[
+  {
+    "id": "alice_crypto",
+    "handle": "alice_crypto",
+    "name": "Alice Thompson",
+    "avatar": "https://images.unsplash.com/photo-1494790108755-2616b8cd81d2?w=400&h=400&fit=crop&crop=face",
+    "banner": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&h=300&fit=crop",
+    "bio": "Crypto educator and DeFi strategist helping you navigate the blockchain universe. 3+ years in crypto markets.",
+    "category": "Education",
+    "followers": 15420,
+    "isVerified": true,
+    "createdAt": "2023-01-15T00:00:00Z",
+    "socialLinks": {
+      "twitter": "@alice_crypto",
+      "discord": "alice#1234"
+    },
+    "subscriptionTiers": [
+      {
+        "id": "basic",
+        "name": "Basic Insights",
+        "priceUSD": 9.99,
+        "interval": "month",
+        "features": ["Weekly market analysis", "Discord access", "Educational content"]
+      },
+      {
+        "id": "premium",
+        "name": "Premium Alpha",
+        "priceUSD": 29.99,
+        "interval": "month",
+        "features": ["Daily market insights", "Private Discord channel", "Trading signals", "1-on-1 monthly call"]
+      }
+    ]
+  },
+  {
+    "id": "bob_artist",
+    "handle": "bob_artist",
+    "name": "Bob Chen",
+    "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+    "banner": "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&h=300&fit=crop",
+    "bio": "Digital artist creating NFT collections and teaching art fundamentals. Specializing in character design and world-building.",
+    "category": "Art",
+    "followers": 8930,
+    "isVerified": true,
+    "createdAt": "2023-03-22T00:00:00Z",
+    "socialLinks": {
+      "twitter": "@bob_creates",
+      "instagram": "@bobartwork"
+    },
+    "subscriptionTiers": [
+      {
+        "id": "supporter",
+        "name": "Art Supporter",
+        "priceUSD": 5.99,
+        "interval": "month",
+        "features": ["Behind-the-scenes content", "Process videos", "Community Discord"]
+      },
+      {
+        "id": "collector",
+        "name": "Collector",
+        "priceUSD": 19.99,
+        "interval": "month",
+        "features": ["Exclusive NFT drops", "Art tutorials", "Monthly livestreams", "1-on-1 portfolio review"]
+      }
+    ]
+  },
+  {
+    "id": "sarah_fitness",
+    "handle": "sarah_fitness",
+    "name": "Sarah Johnson",
+    "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
+    "banner": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&h=300&fit=crop",
+    "bio": "Certified personal trainer and nutrition coach. Helping busy professionals build sustainable fitness habits.",
+    "category": "Fitness",
+    "followers": 23150,
+    "isVerified": false,
+    "createdAt": "2023-02-10T00:00:00Z",
+    "socialLinks": {
+      "youtube": "@sarahfitness",
+      "instagram": "@sarahfit"
+    },
+    "subscriptionTiers": [
+      {
+        "id": "starter",
+        "name": "Fitness Starter",
+        "priceUSD": 12.99,
+        "interval": "month",
+        "features": ["Weekly workout plans", "Nutrition guides", "Progress tracking tools"]
+      },
+      {
+        "id": "pro",
+        "name": "Fitness Pro",
+        "priceUSD": 39.99,
+        "interval": "month",
+        "features": ["Personalized meal plans", "Custom workout routines", "Weekly check-ins", "Form review videos"]
+      }
+    ]
+  }
+]

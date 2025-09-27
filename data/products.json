@@ -1,0 +1,57 @@
+[
+  {
+    "id": "crypto-course-101",
+    "creatorId": "alice_crypto",
+    "title": "Crypto Trading Masterclass",
+    "description": "Complete guide to cryptocurrency trading from basics to advanced strategies.",
+    "priceUSD": 99.99,
+    "type": "course",
+    "image": "https://images.unsplash.com/photo-1640340434855-6084b1f4901c?w=400&h=300&fit=crop",
+    "downloadUrl": "#",
+    "createdAt": "2024-01-15T00:00:00Z"
+  },
+  {
+    "id": "defi-guide-2024",
+    "creatorId": "alice_crypto",
+    "title": "DeFi Investment Guide 2024",
+    "description": "Your comprehensive guide to decentralized finance opportunities and risks.",
+    "priceUSD": 49.99,
+    "type": "ebook",
+    "image": "https://images.unsplash.com/photo-1639322537504-6427a16b0a28?w=400&h=300&fit=crop",
+    "downloadUrl": "#",
+    "createdAt": "2024-02-10T00:00:00Z"
+  },
+  {
+    "id": "character-design-pack",
+    "creatorId": "bob_artist",
+    "title": "Fantasy Character Design Pack",
+    "description": "20 high-resolution character designs with process breakdowns and source files.",
+    "priceUSD": 29.99,
+    "type": "digital_art",
+    "image": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+    "downloadUrl": "#",
+    "createdAt": "2024-01-20T00:00:00Z"
+  },
+  {
+    "id": "art-fundamentals",
+    "creatorId": "bob_artist",
+    "title": "Digital Art Fundamentals Course",
+    "description": "Master the basics of digital art with step-by-step video tutorials.",
+    "priceUSD": 79.99,
+    "type": "course",
+    "image": "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=300&fit=crop",
+    "downloadUrl": "#",
+    "createdAt": "2024-02-28T00:00:00Z"
+  },
+  {
+    "id": "30-day-fitness-plan",
+    "creatorId": "sarah_fitness",
+    "title": "30-Day Home Workout Plan",
+    "description": "Transform your fitness at home with this comprehensive 30-day program.",
+    "priceUSD": 19.99,
+    "type": "program",
+    "image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
+    "downloadUrl": "#",
+    "createdAt": "2024-01-05T00:00:00Z"
+  }
+]
