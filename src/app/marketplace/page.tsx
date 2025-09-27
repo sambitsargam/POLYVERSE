@@ -18,6 +18,7 @@ interface Product {
   isActive: boolean;
   purchaseCount: number;
   createdAt: number;
+  isUserCreated?: boolean;
 }
 
 export default function Marketplace() {
