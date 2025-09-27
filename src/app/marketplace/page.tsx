@@ -7,6 +7,14 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { createPaymentLink } from '@/lib/kirapay-api';
 import { showToast } from '@/components/Toast';
 
+// Marketplace Fee Configuration
+const MARKETPLACE_CONFIG = {
+  REGISTRATION_FEE: 5.0, // $5 to register a product
+  FEATURING_FEE: 15.0,   // $15 to feature a product at the top
+  LISTING_FEE_FIL: 1.0,  // 1 FIL listing charge for content creation
+  CONTRACT_CREATOR: '0xF846d2747D1cb33635Cc66dD6D513d85Cb830f13', // Receives all fees
+};
+
 interface Product {
   id: number;
   creator: string;
@@ -19,6 +27,9 @@ interface Product {
   purchaseCount: number;
   createdAt: number;
   isUserCreated?: boolean;
+  isFeatured?: boolean;
+  registrationFeePaid?: number;
+  featuringFeePaid?: number;
 }
 
 export default function Marketplace() {
@@ -32,6 +43,18 @@ export default function Marketplace() {
     isOpen: false,
     url: '',
     productTitle: ''
+  });
+  const [feePaymentModal, setFeePaymentModal] = useState<{
+    isOpen: boolean, 
+    url: string, 
+    type: 'registration' | 'featuring',
+    productId?: number,
+    amount: number
+  }>({
+    isOpen: false,
+    url: '',
+    type: 'registration',
+    amount: 0
   });
 
   useEffect(() => {
@@ -54,8 +77,11 @@ export default function Marketplace() {
           contentHash: 'QmX1Y2Z3A4B5C6D7E8F9G0H1I2J3K4L5M6N7O8P9Q0R1S',
           productType: 'digital_art',
           isActive: true,
-          purchaseCount: 12,
-          createdAt: Math.floor(Date.now() / 1000) - 86400 * 2
+          purchaseCount: 1,
+          createdAt: Math.floor(Date.now() / 1000) - 86400 * 1,
+          isFeatured: true,
+          registrationFeePaid: 5.0,
+          featuringFeePaid: 15.0
         },
         {
           id: 2,
@@ -66,8 +92,8 @@ export default function Marketplace() {
           contentHash: 'QmA1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V',
           productType: 'ebook',
           isActive: true,
-          purchaseCount: 8,
-          createdAt: Math.floor(Date.now() / 1000) - 86400 * 5
+          purchaseCount: 2,
+          createdAt: Math.floor(Date.now() / 1000) - 86400 * 0
         },
         {
           id: 3,
@@ -78,8 +104,8 @@ export default function Marketplace() {
           contentHash: 'QmB2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W',
           productType: 'course',
           isActive: true,
-          purchaseCount: 25,
-          createdAt: Math.floor(Date.now() / 1000) - 86400 * 7
+          purchaseCount: 0,
+          createdAt: Math.floor(Date.now() / 1000) - 86400 * 1
         },
         {
           id: 4,
@@ -90,8 +116,8 @@ export default function Marketplace() {
           contentHash: 'QmC3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W3X',
           productType: 'music',
           isActive: true,
-          purchaseCount: 33,
-          createdAt: Math.floor(Date.now() / 1000) - 86400 * 3
+          purchaseCount: 4,
+          createdAt: Math.floor(Date.now() / 1000) - 86400 * 0
         },
         {
           id: 5,
@@ -102,7 +128,7 @@ export default function Marketplace() {
           contentHash: 'QmD4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y',
           productType: 'program',
           isActive: true,
-          purchaseCount: 7,
+          purchaseCount: 0,
           createdAt: Math.floor(Date.now() / 1000) - 86400 * 1
         },
         {
@@ -114,8 +140,8 @@ export default function Marketplace() {
           contentHash: 'QmE5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z',
           productType: 'video',
           isActive: true,
-          purchaseCount: 19,
-          createdAt: Math.floor(Date.now() / 1000) - 86400 * 4
+          purchaseCount: 0,
+          createdAt: Math.floor(Date.now() / 1000) - 86400 * 0
         },
         {
           id: 7,
@@ -126,8 +152,8 @@ export default function Marketplace() {
           contentHash: 'QmF6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6A',
           productType: 'other',
           isActive: true,
-          purchaseCount: 14,
-          createdAt: Math.floor(Date.now() / 1000) - 86400 * 6
+          purchaseCount: 1,
+          createdAt: Math.floor(Date.now() / 1000) - 86400 * 1
         }
       ];
       
@@ -152,7 +178,7 @@ export default function Marketplace() {
             isUserCreated: true // Flag to identify user-created products
           }));
         } catch (e) {
-          console.error('Error parsing user products:', e);
+          // Silent error handling
         }
       }
 
@@ -164,7 +190,7 @@ export default function Marketplace() {
       setProducts(allProducts);
       
     } catch (err: any) {
-      console.error('Error loading products:', err);
+      // Silent error handling
       setError('Failed to load products');
     } finally {
       setLoading(false);
@@ -211,8 +237,108 @@ export default function Marketplace() {
         showToast('Failed to create payment link. Please try again.', 'error')
       }
     } catch (error) {
-      console.error('Purchase error:', error)
+      // Silent error handling
       showToast('Failed to initiate purchase. Please try again.', 'error')
+    }
+  }
+
+  const handleRegistrationFee = async (product: any) => {
+    if (!isConnected || !address) {
+      showToast('Please connect your wallet to pay registration fee', 'error')
+      return
+    }
+
+    try {
+      const paymentData = {
+        currency: 'USDC',
+        receiver: MARKETPLACE_CONFIG.CONTRACT_CREATOR,
+        price: MARKETPLACE_CONFIG.REGISTRATION_FEE,
+        name: `Registration Fee - ${product.title}`,
+        redirectUrl: `${window.location.origin}/marketplace?fee_paid=registration&product_id=${product.id}`
+      }
+
+      const paymentLink = await createPaymentLink(paymentData)
+      
+      if (paymentLink?.data?.url) {
+        setFeePaymentModal({
+          isOpen: true,
+          url: paymentLink.data.url,
+          type: 'registration',
+          productId: product.id,
+          amount: MARKETPLACE_CONFIG.REGISTRATION_FEE
+        })
+        showToast('Registration fee payment opened!', 'success')
+      } else {
+        showToast('Failed to create payment link. Please try again.', 'error')
+      }
+    } catch (error) {
+      showToast('Failed to initiate registration fee payment.', 'error')
+    }
+  }
+
+  const handleFeaturingFee = async (product: any) => {
+    if (!isConnected || !address) {
+      showToast('Please connect your wallet to pay featuring fee', 'error')
+      return
+    }
+
+    try {
+      const paymentData = {
+        currency: 'USDC',
+        receiver: MARKETPLACE_CONFIG.CONTRACT_CREATOR,
+        price: MARKETPLACE_CONFIG.FEATURING_FEE,
+        name: `Featuring Fee - ${product.title}`,
+        redirectUrl: `${window.location.origin}/marketplace?fee_paid=featuring&product_id=${product.id}`
+      }
+
+      const paymentLink = await createPaymentLink(paymentData)
+      
+      if (paymentLink?.data?.url) {
+        setFeePaymentModal({
+          isOpen: true,
+          url: paymentLink.data.url,
+          type: 'featuring',
+          productId: product.id,
+          amount: MARKETPLACE_CONFIG.FEATURING_FEE
+        })
+        showToast('Featuring fee payment opened!', 'success')
+      } else {
+        showToast('Failed to create payment link. Please try again.', 'error')
+      }
+    } catch (error) {
+      showToast('Failed to initiate featuring fee payment.', 'error')
+    }
+  }
+
+  const handleListingFee = async () => {
+    if (!isConnected || !address) {
+      showToast('Please connect your wallet to pay listing fee', 'error')
+      return
+    }
+
+    try {
+      const paymentData = {
+        currency: 'FIL',
+        receiver: MARKETPLACE_CONFIG.CONTRACT_CREATOR,
+        price: MARKETPLACE_CONFIG.LISTING_FEE_FIL,
+        name: `Listing Fee - Create Content`,
+        redirectUrl: `${window.location.origin}/create?listing_fee_paid=true`
+      }
+
+      const paymentLink = await createPaymentLink(paymentData)
+      
+      if (paymentLink?.data?.url) {
+        setPaymentModal({
+          isOpen: true,
+          url: paymentLink.data.url,
+          productTitle: 'Content Creation Listing Fee (1 FIL)'
+        })
+        showToast('Listing fee payment opened! Complete payment to create content.', 'success')
+      } else {
+        showToast('Failed to create payment link. Please try again.', 'error')
+      }
+    } catch (error) {
+      showToast('Failed to initiate listing fee payment.', 'error')
     }
   }
 
@@ -281,6 +407,11 @@ export default function Marketplace() {
   );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
+    // Always prioritize featured products first
+    if (a.isFeatured && !b.isFeatured) return -1;
+    if (!a.isFeatured && b.isFeatured) return 1;
+    
+    // Then sort by selected criteria
     switch (sortBy) {
       case 'newest':
         return b.createdAt - a.createdAt;
@@ -312,7 +443,7 @@ export default function Marketplace() {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {products.reduce((sum, p) => sum + p.purchaseCount, 0)}
+                8
               </div>
               <div className="text-sm text-gray-500">Sales</div>
             </div>
@@ -324,7 +455,7 @@ export default function Marketplace() {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600">
-                ${Math.round(products.reduce((sum, p) => sum + (p.priceUSD * p.purchaseCount), 0)).toLocaleString()}
+                $269.92
               </div>
               <div className="text-sm text-gray-500">Volume</div>
             </div>
@@ -379,14 +510,6 @@ export default function Marketplace() {
               </div>
             </div>
             
-            {/* Payment Modal Notice */}
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
-                <span className="font-medium">💡 Payment Info:</span> Purchases open in a secure modal overlay. 
-                Complete your payment without leaving this page!
-              </p>
-            </div>
-
             {sortedProducts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {sortedProducts.map((product) => (
@@ -398,10 +521,15 @@ export default function Marketplace() {
                             {getProductIcon(product.productType)}
                           </span>
                         </div>
-                        <div className="absolute top-2 right-2">
+                        <div className="absolute top-2 right-2 flex flex-col gap-1">
                           <span className="bg-white/90 backdrop-blur-sm text-xs px-2 py-1 rounded-full text-gray-600 font-medium">
                             {formatProductType(product.productType)}
                           </span>
+                          {product.isFeatured && (
+                            <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-2 py-1 rounded-full font-bold shadow-md">
+                              ⭐ FEATURED
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -416,6 +544,31 @@ export default function Marketplace() {
                       <p className="text-sm text-gray-600 mb-4 line-clamp-3 min-h-[4rem]">
                         {product.description}
                       </p>
+                      
+                      {/* Fee Payment Options for User-Created Products */}
+                      {product.isUserCreated && product.creator === address && !product.registrationFeePaid && (
+                        <div className="mb-3 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                          <p className="text-xs text-yellow-800 mb-2">📋 Product not yet registered</p>
+                          <button
+                            onClick={() => handleRegistrationFee(product)}
+                            className="text-xs bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 rounded"
+                          >
+                            Pay Registration Fee (${MARKETPLACE_CONFIG.REGISTRATION_FEE})
+                          </button>
+                        </div>
+                      )}
+                      
+                      {product.isUserCreated && product.creator === address && product.registrationFeePaid && !product.isFeatured && (
+                        <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-lg">
+                          <p className="text-xs text-blue-800 mb-2">⭐ Feature your product at the top</p>
+                          <button
+                            onClick={() => handleFeaturingFee(product)}
+                            className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                          >
+                            Pay Featuring Fee (${MARKETPLACE_CONFIG.FEATURING_FEE})
+                          </button>
+                        </div>
+                      )}
                       
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-2xl font-bold text-purple-600">
@@ -460,15 +613,69 @@ export default function Marketplace() {
                   </div>
                 ) : (
                   <div>
-                    <p className="text-sm text-gray-500 mb-4">
-                      Be the first to create content on the platform!
-                    </p>
-                    <a 
-                      href="/create" 
-                      className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                    >
-                      Create Content
-                    </a>
+                    <div className="mb-6">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Create Content</h3>
+                      <p className="text-sm text-gray-500 mb-4">
+                        Share your content with the world on the decentralized web
+                      </p>
+                      
+                      {/* 4-Step Process */}
+                      <div className="flex items-center justify-between mb-6 p-4 bg-gray-50 rounded-lg">
+                        <div className="flex items-center text-center">
+                          <div className="flex flex-col items-center">
+                            <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold mb-2">
+                              1
+                            </div>
+                            <span className="text-xs text-gray-600">Upload</span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex-1 h-px bg-gray-300 mx-2"></div>
+                        
+                        <div className="flex items-center text-center">
+                          <div className="flex flex-col items-center">
+                            <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold mb-2">
+                              2
+                            </div>
+                            <span className="text-xs text-gray-600">Details</span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex-1 h-px bg-gray-300 mx-2"></div>
+                        
+                        <div className="flex items-center text-center">
+                          <div className="flex flex-col items-center">
+                            <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold mb-2">
+                              3
+                            </div>
+                            <span className="text-xs text-gray-600">Pricing</span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex-1 h-px bg-gray-300 mx-2"></div>
+                        
+                        <div className="flex items-center text-center">
+                          <div className="flex flex-col items-center">
+                            <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold mb-2">
+                              4
+                            </div>
+                            <span className="text-xs text-gray-600">Publish</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <button
+                        onClick={handleListingFee}
+                        className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                      >
+                        Create Content (1 FIL listing fee)
+                      </button>
+                      <p className="text-xs text-gray-400">
+                        A 1 FIL listing fee is required to create content on the marketplace
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -517,6 +724,58 @@ export default function Marketplace() {
                 </div>
                 <button
                   onClick={() => setPaymentModal({isOpen: false, url: '', productTitle: ''})}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm font-medium"
+                >
+                  Cancel Payment
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Fee Payment Modal */}
+      {feePaymentModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-green-600 to-emerald-700 text-white">
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2 animate-pulse"></div>
+                <h3 className="text-lg font-semibold">
+                  {feePaymentModal.type === 'registration' ? 'Registration Fee' : 'Featuring Fee'}
+                </h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm opacity-90">${feePaymentModal.amount}</span>
+                <button
+                  onClick={() => setFeePaymentModal({isOpen: false, url: '', type: 'registration', amount: 0})}
+                  className="text-white hover:bg-white hover:bg-opacity-20 rounded p-1 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="p-2">
+              <iframe
+                src={feePaymentModal.url}
+                className="w-full h-[600px] border-0 rounded"
+                title="Fee Payment"
+                allow="payment; encrypted-media"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"
+              />
+            </div>
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-sm text-gray-600">
+                  <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  </svg>
+                  Fee payment to marketplace contract
+                </div>
+                <button
+                  onClick={() => setFeePaymentModal({isOpen: false, url: '', type: 'registration', amount: 0})}
                   className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm font-medium"
                 >
                   Cancel Payment

@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { Navbar } from '@/components/Navbar'
 import { Toast } from '@/components/Toast'
 import { Providers } from '@/components/Providers'
-import { UserDebugInfo } from '@/components/UserDebugInfo'
 
 export const metadata: Metadata = {
   title: 'POLYVERSE — Creator Storefront',
@@ -36,7 +35,6 @@ export default function RootLayout({
             {children}
           </main>
           <Toast />
-          <UserDebugInfo />
         </Providers>
       </body>
     </html>
