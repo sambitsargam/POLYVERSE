@@ -80,7 +80,7 @@ export default function HomePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-900 via-teal-900 to-cyan-900">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-white text-lg">Loading the future of creators...</p>
@@ -104,7 +104,7 @@ export default function HomePage() {
           <div className="animate-fade-in">
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight">
               Welcome to{' '}
-              <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+              <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent animate-pulse">
                 POLYVERSE
               </span>
             </h1>
@@ -115,12 +115,12 @@ export default function HomePage() {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
-              <button className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-semibold rounded-full text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+              <button className="group relative px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-full text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
                 <span className="relative z-10 flex items-center">
                   <RocketLaunchIcon className="w-6 h-6 mr-2 group-hover:animate-bounce" />
                   Explore Creators
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
               
               <button className="group flex items-center px-8 py-4 bg-white bg-opacity-10 backdrop-blur-sm text-white font-semibold rounded-full text-lg border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300">
@@ -132,14 +132,14 @@ export default function HomePage() {
             {/* Search Bar - Enhanced */}
             <div className="max-w-md mx-auto relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <MagnifyingGlassIcon className="h-6 w-6 text-gray-400 group-focus-within:text-purple-400 transition-colors" />
+                <MagnifyingGlassIcon className="h-6 w-6 text-gray-400 group-focus-within:text-emerald-400 transition-colors" />
               </div>
               <input
                 type="text"
                 placeholder="Search creators, products, categories..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-20 rounded-full text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300"
+                className="w-full pl-12 pr-4 py-4 bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-20 rounded-full text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-300"
               />
             </div>
           </div>
@@ -166,8 +166,8 @@ export default function HomePage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="group text-center p-8 rounded-2xl hover:bg-gradient-to-br hover:from-purple-50 hover:to-pink-50 transition-all duration-300 hover:shadow-xl">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+            <div className="group text-center p-8 rounded-2xl hover:bg-gradient-to-br hover:from-emerald-50 hover:to-teal-50 transition-all duration-300 hover:shadow-xl">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <ShieldCheckIcon className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">Blockchain Secured</h3>
@@ -176,8 +176,8 @@ export default function HomePage() {
               </p>
             </div>
             
-            <div className="group text-center p-8 rounded-2xl hover:bg-gradient-to-br hover:from-cyan-50 hover:to-blue-50 transition-all duration-300 hover:shadow-xl">
-              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+            <div className="group text-center p-8 rounded-2xl hover:bg-gradient-to-br hover:from-orange-50 hover:to-amber-50 transition-all duration-300 hover:shadow-xl">
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <CurrencyDollarIcon className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">Multi-Token Payments</h3>
@@ -186,8 +186,8 @@ export default function HomePage() {
               </p>
             </div>
             
-            <div className="group text-center p-8 rounded-2xl hover:bg-gradient-to-br hover:from-green-50 hover:to-emerald-50 transition-all duration-300 hover:shadow-xl">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+            <div className="group text-center p-8 rounded-2xl hover:bg-gradient-to-br hover:from-cyan-50 hover:to-sky-50 transition-all duration-300 hover:shadow-xl">
+              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-sky-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <SparklesIcon className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">Decentralized Storage</h3>
@@ -200,29 +200,29 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-900 to-indigo-900">
+      <section className="py-20 bg-gradient-to-r from-emerald-900 to-teal-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
             <div className="group hover:scale-105 transition-transform duration-300">
-              <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
                 1000+
               </div>
               <p className="text-gray-300">Active Creators</p>
             </div>
             <div className="group hover:scale-105 transition-transform duration-300">
-              <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
                 $2.4M
               </div>
               <p className="text-gray-300">Creator Earnings</p>
             </div>
             <div className="group hover:scale-105 transition-transform duration-300">
-              <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
                 50K+
               </div>
               <p className="text-gray-300">Supporters</p>
             </div>
             <div className="group hover:scale-105 transition-transform duration-300">
-              <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
                 99.9%
               </div>
               <p className="text-gray-300">Uptime</p>
@@ -242,7 +242,7 @@ export default function HomePage() {
                 className={`
                   px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105
                   ${selectedCategory === category
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }
                 `}
@@ -320,7 +320,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-emerald-900 via-teal-900 to-cyan-900 relative overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-5xl font-bold text-white mb-6">
@@ -330,7 +330,7 @@ export default function HomePage() {
             Join thousands of creators who have already embraced the future of decentralized content creation.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <button className="px-10 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-semibold rounded-full text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+            <button className="px-10 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-full text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
               Start Creating Today
             </button>
             <button className="px-10 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-full text-lg hover:bg-white hover:text-gray-900 transition-all duration-300">

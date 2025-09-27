@@ -6,6 +6,9 @@ import { Toast } from '@/components/Toast'
 export const metadata: Metadata = {
   title: 'POLYVERSE — Creator Storefront',
   description: 'Decentralized creator economy platform powered by blockchain technology',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({
