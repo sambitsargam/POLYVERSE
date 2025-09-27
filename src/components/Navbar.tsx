@@ -3,23 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMockMode, setIsMockMode] = useState(true);
-
-  const handleMockModeToggle = () => {
-    const newMode = !isMockMode;
-    setIsMockMode(newMode);
-    localStorage.setItem('mockMode', JSON.stringify(newMode));
-    if (newMode) {
-      // Reset to mock mode - clear localStorage data
-      localStorage.removeItem('purchaseHistory');
-      localStorage.removeItem('subscriptions');
-      localStorage.removeItem('selectedWallet');
-      window.location.reload();
-    }
-  };
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
@@ -41,40 +28,20 @@ export const Navbar = () => {
             <Link href="/store" className="text-gray-700 hover:text-primary transition-colors">
               Filecoin Store
             </Link>
+            <Link href="/register" className="text-gray-700 hover:text-primary transition-colors">
+              Become Creator
+            </Link>
+            <Link href="/create" className="text-gray-700 hover:text-primary transition-colors">
+              Create Content
+            </Link>
             <Link href="/dashboard" className="text-gray-700 hover:text-primary transition-colors">
               Dashboard
-            </Link>
-            <Link href="/payment-demo" className="text-gray-700 hover:text-primary transition-colors">
-              Payment Demo
-            </Link>
-            <Link href="/x402-demo" className="text-gray-700 hover:text-primary transition-colors">
-              x402 Subscriptions
-            </Link>
-            <Link href="/raffle" className="text-gray-700 hover:text-primary transition-colors">
-              Raffle
-            </Link>
-            <Link href="/filecoin-demo" className="text-gray-700 hover:text-primary transition-colors">
-              Filecoin Demo
             </Link>
           </div>
 
           {/* Right side */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* Mock Mode Toggle */}
-            <label className="flex items-center space-x-2 text-sm">
-              <input
-                type="checkbox"
-                checked={isMockMode}
-                onChange={handleMockModeToggle}
-                className="rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <span className="text-gray-600">Mock Mode</span>
-            </label>
-
-            <Link href="/connect" className="btn-secondary">
-              <UserIcon className="w-4 h-4 mr-2" />
-              Connect Wallet
-            </Link>
+            <ConnectButton />
           </div>
 
           {/* Mobile menu button */}
@@ -108,54 +75,30 @@ export const Navbar = () => {
               Filecoin Store
             </Link>
             <Link
+              href="/register"
+              className="block text-gray-700 hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Become Creator
+            </Link>
+            <Link
+              href="/create"
+              className="block text-gray-700 hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Create Content
+            </Link>
+            <Link
               href="/dashboard"
               className="block text-gray-700 hover:text-primary transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Dashboard
             </Link>
-            <Link
-              href="/payment-demo"
-              className="block text-gray-700 hover:text-primary transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Payment Demo
-            </Link>
-            <Link
-              href="/x402-demo"
-              className="block text-gray-700 hover:text-primary transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              x402 Subscriptions
-            </Link>
-            <Link
-              href="/raffle"
-              className="block text-gray-700 hover:text-primary transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Raffle
-            </Link>
-            <Link
-              href="/filecoin-demo"
-              className="block text-gray-700 hover:text-primary transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Filecoin Demo
-            </Link>
             <div className="pt-4 border-t border-gray-100">
-              <label className="flex items-center space-x-2 text-sm mb-4">
-                <input
-                  type="checkbox"
-                  checked={isMockMode}
-                  onChange={handleMockModeToggle}
-                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <span className="text-gray-600">Mock Mode</span>
-              </label>
-              <Link href="/connect" className="btn-secondary w-full text-center">
-                <UserIcon className="w-4 h-4 mr-2" />
-                Connect Wallet
-              </Link>
+              <div className="flex justify-center">
+                <ConnectButton />
+              </div>
             </div>
           </div>
         )}

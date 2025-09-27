@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 import { SynapseService } from '@/lib/synapse-service'
-import { getSigner } from '@/lib/wagmi-viem'
+import { getSigner } from '@/lib/viem-utils'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 export default function CreateContent() {
   const { address, isConnected } = useAccount()
+  const { data: walletClient } = useWalletClient()
   const [step, setStep] = useState(1)
   const [contentFile, setContentFile] = useState<File | null>(null)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
@@ -31,7 +32,7 @@ export default function CreateContent() {
 
     try {
       // Initialize Synapse service
-      const signer = await getSigner()
+      const signer = await getSigner(walletClient)
       if (!signer) {
         throw new Error('Could not get signer')
       }
