@@ -253,29 +253,6 @@ export default function SubscriptionsPage() {
           </p>
         </div>
 
-        {/* Network Notice for x402 Subscriptions */}
-        <div className="mb-8 p-6 bg-amber-50 rounded-lg border border-amber-200">
-          <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0">
-              <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-amber-900 mb-2">⚡ Polygon Amoy Required</h3>
-              <p className="text-amber-800 mb-3">
-                <strong>x402 subscriptions require Polygon Amoy testnet.</strong> Your wallet will automatically 
-                switch networks when you purchase a subscription. Make sure you have testnet USDC from the Circle faucet.
-              </p>
-              <div className="text-sm text-amber-700 space-y-1">
-                <p>• <strong>Required Network:</strong> Polygon Amoy (Chain ID: 80002)</p>
-                <p>• <strong>Payment Token:</strong> USDC (6 decimals)</p>
-                <p>• <strong>Get Testnet USDC:</strong> <a href="https://faucet.circle.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-900">faucet.circle.com</a> → Select "Polygon PoS Amoy"</p>
-                <p>• <strong>Protocol:</strong> x402 micropayments with gasless transactions</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Wallet Connection Status */}
         <div className="mb-8 p-4 bg-gray-100 rounded-lg">
