@@ -6,7 +6,7 @@ import { Creator, Purchase, Product, DashboardStats } from '@/lib/types';
 import { formatCurrency, formatNumber, calculateMRR, getActiveSubscribers, getTotalEarnings } from '@/lib/utils';
 import { SmallLineChart } from '@/components/SmallLineChart';
 import { FileUploader } from '@/components/FileUploader';
-import { useWallet } from '@/lib/wallet';
+import { useAccount } from 'wagmi';
 import { SynapseService, defaultSynapseConfig } from '@/lib/synapse-service';
 
 interface UploadedFile {
@@ -37,7 +37,7 @@ export default function DashboardPage() {
   const [synapseService, setSynapseService] = useState<SynapseService | null>(null);
   
   // Get wallet context
-  const { isConnected, address } = useWallet();
+  const { isConnected, address } = useAccount();
 
   useEffect(() => {
     const fetchData = async () => {

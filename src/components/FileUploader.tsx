@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { FilecoinStorageService, type UploadProgress } from '@/lib/filecoin'
-import { useWallet } from '@/lib/wallet'
+import { useAccount, useConnect } from 'wagmi'
 
 interface FileUploaderProps {
   onUpload?: (result: { cid: string; size: string; name: string }) => void
@@ -26,7 +26,8 @@ export function FileUploader({
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Get wallet context
-  const { isConnected, connectWallet, provider } = useWallet()
+  const { isConnected } = useAccount()
+  const { connect, connectors } = useConnect()
   
   // Check for API key
   const apiKey = process.env.NEXT_PUBLIC_LIGHTHOUSE_API_KEY
@@ -38,7 +39,7 @@ export function FileUploader({
   const storageService = new FilecoinStorageService(
     apiKey || '',
     process.env.NEXT_PUBLIC_GATEWAY_URL,
-    provider || undefined
+    undefined // Remove provider dependency for now
   )
 
   const handleFileSelect = async (file: File) => {
@@ -180,7 +181,7 @@ export function FileUploader({
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  connectWallet()
+                  connectors.length > 0 && connect({ connector: connectors[0] })
                 }}
                 className="mt-3 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-sm font-medium"
               >

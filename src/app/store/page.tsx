@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { FileUploader } from '@/components/FileUploader'
-import { useWallet } from '@/lib/wallet'
+import { useAccount } from 'wagmi'
 import { CloudArrowUpIcon, MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline'
 
 interface StoredFile {
@@ -23,7 +23,7 @@ export default function StorePage() {
   const [priceFilter, setPriceFilter] = useState('all')
   const [showUploadModal, setShowUploadModal] = useState(false)
   
-  const { isConnected, address, connectWallet } = useWallet()
+  const { isConnected, address } = useAccount()
 
   useEffect(() => {
     // Load stored files from localStorage (in production, this would come from a backend)

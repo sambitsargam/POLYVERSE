@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useWallet } from '@/lib/wallet';
+import { useAccount, useConnect } from 'wagmi';
 import { SubscriptionPlan, SubscriptionState, AgentPaymentEvent } from '@/lib/x402-service';
 import { Address } from 'viem';
 
@@ -28,7 +28,8 @@ interface AgentStatus {
 }
 
 export default function X402DemoPage() {
-  const { address: walletAddress, connectWallet, isConnected } = useWallet();
+  const { address: walletAddress, isConnected } = useAccount();
+  const { connect, connectors } = useConnect();
   const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
   const [userSubscriptions, setUserSubscriptions] = useState<SubscriptionWithPlan[]>([]);
   const [agentStatus, setAgentStatus] = useState<AgentStatus | null>(null);
@@ -122,7 +123,10 @@ export default function X402DemoPage() {
 
   const subscribeToPlan = async (planId: string) => {
     if (!walletAddress) {
-      await connectWallet();
+      // Connect with the first available connector
+      if (connectors.length > 0) {
+        connect({ connector: connectors[0] });
+      }
       return;
     }
 
@@ -245,7 +249,7 @@ export default function X402DemoPage() {
               Connect your MetaMask wallet to interact with x402 subscriptions on Polygon Amoy.
             </p>
             <button
-              onClick={connectWallet}
+              onClick={() => connectors.length > 0 && connect({ connector: connectors[0] })}
               className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700"
             >
               Connect MetaMask
