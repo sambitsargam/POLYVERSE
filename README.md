@@ -7,7 +7,8 @@ A Web3 creator platform that enables subscription-based content monetization thr
 🔐 **x402 Protocol Subscriptions** - HTTP 402 paywall with real USDC payments on Polygon  
 🌐 **Filecoin Storage** - Decentralized, encrypted content hosting via Lighthouse  
 💳 **Multi-chain Payments** - Crypto payment processing across networks  
-📊 **Creator Dashboard** - Real-time analytics and subscriber management  
+� **The Graph Hypergraph** - Decentralized knowledge graph for creator data  
+�📊 **Creator Dashboard** - Real-time analytics and subscriber management  
 🎯 **Token-Gated Content** - NFT and subscription-based access control  
 
 ## 🚀 Quick Start
@@ -38,13 +39,19 @@ NEXT_PUBLIC_AMOY_RPC=https://rpc-amoy.polygon.technology
 LIGHTHOUSE_API_KEY=your_lighthouse_api_key_here
 LIGHTHOUSE_GATEWAY_URL=https://gateway.lighthouse.storage/ipfs/
 
+# Hypergraph Integration
+HYPERGRAPH_APP_ID=polyverse-creator-platform
+HYPERGRAPH_ENVIRONMENT=testnet
+HYPERGRAPH_DEBUG=true
+
 # Payment Processing
 KIRAPAY_API_KEY=your_kirapay_api_key
 ```
 
 ### 3. Get API Keys
 - **Lighthouse API**: [lighthouse.storage](https://lighthouse.storage) for Filecoin storage
-- **KiraPay API**: [kirapay.com](https://kirapay.com) for payment processing  
+- **KiraPay API**: [kirapay.com](https://kirapay.com) for payment processing
+- **The Graph Hypergraph**: [thegraph.com/hypergraph](https://thegraph.com/hypergraph) for decentralized data  
 
 ### 4. Start Development
 ```bash
@@ -57,6 +64,7 @@ npm run dev
 - **Frontend**: Next.js 14, TypeScript, Tailwind CSS
 - **Blockchain**: Polygon, x402 Protocol, EIP-3009 signatures
 - **Storage**: Filecoin network via Lighthouse SDK
+- **Data Layer**: The Graph Hypergraph decentralized knowledge graph
 - **Payments**: Multi-chain crypto processing
 - **Wallet**: RainbowKit, Wagmi, viem
 
@@ -121,8 +129,12 @@ src/
 │   ├── components/        # React components
 │   │   ├── demo/         # Demo components
 │   │   └── ui/           # UI components
-│   └── hypergraph/       # Data service layer
-├── data/                  # Sample data
+│   └── hypergraph/       # The Graph Hypergraph integration
+│       ├── schema.ts     # GRC-20 entity definitions
+│       ├── mapping.ts    # Entity-to-graph mappings
+│       ├── service.ts    # Hypergraph hooks and utilities
+│       └── provider.tsx  # React context provider
+├── data/                  # Sample data (deprecated - replaced by Hypergraph)
 └── docs/                  # Documentation
 ```
 
@@ -180,6 +192,68 @@ curl -X POST /api/storage/upload \
 curl /api/storage/deals?hash=QmXXX...
 ```
 
+## 🔗 The Graph Hypergraph Integration
+
+### Features
+- **Decentralized Knowledge Graph** - Store creator and fan data on-chain
+- **Local-First Architecture** - Offline-first with sync to decentralized network
+- **GRC-20 Compliant** - Structured entity relationships using Graph standard
+- **Real-time Queries** - Live data querying with React hooks
+- **Cross-Platform Sync** - Data synchronization across devices and platforms
+
+### Schema Overview
+```typescript
+// Core entities in the Hypergraph
+Creator {
+  handle: String
+  name: String
+  bio: String
+  avatar: String
+  category: String
+  followerCount: Number
+  isVerified: Boolean
+}
+
+Fan {
+  walletAddress: String
+  name: String
+  avatar: String
+  totalSpent: Number
+}
+
+Follow {
+  fan: Fan
+  creator: Creator
+  followedAt: Date
+  supportLevel: String
+}
+```
+
+### Usage
+```typescript
+import { useCreators, useFans, useFollows } from '@/hypergraph/service';
+
+// Query creators from Hypergraph
+const { data: creators, isPending, error } = useCreators('public', 10);
+
+// Publish new creator to the knowledge graph
+const { publishCreator } = usePolyverseHypergraph();
+await publishCreator(creatorData);
+```
+
+### Environment Setup
+```bash
+# Hypergraph Configuration
+HYPERGRAPH_APP_ID=polyverse-creator-platform
+HYPERGRAPH_ENVIRONMENT=testnet
+HYPERGRAPH_DEBUG=true
+```
+
+## 💾 Filecoin Storage Demo
+
+### Features
+```
+
 ## 🚀 Deployment
 
 ### Build for Production
@@ -209,7 +283,8 @@ Set all required environment variables in your deployment platform.
 - [x] x402 Protocol Integration with Polygon
 - [x] Filecoin Lighthouse Storage
 - [x] Multi-chain Payment Processing
-- [x] Creator Showcase with Sample Data
+- [x] The Graph Hypergraph Integration
+- [x] Real-time Data Synchronization
 - [ ] NFT Access Token Minting
 - [ ] Cross-Chain Subscription Bridging
 - [ ] Mobile App Development
@@ -221,6 +296,7 @@ For comprehensive technical documentation, see the `/docs` folder:
 
 - **[x402 Protocol Guide](./docs/x402-protocol.md)** - HTTP 402 implementation
 - **[Filecoin Storage Guide](./docs/filecoin-lighthouse.md)** - Decentralized storage
+- **[Hypergraph Integration](./docs/hypergraph-guide.md)** - Knowledge graph implementation  
 - **[API Reference](./docs/api-reference.md)** - Complete API documentation
 - **[Deployment Guide](./docs/deployment.md)** - Production deployment
 
@@ -228,8 +304,6 @@ For comprehensive technical documentation, see the `/docs` folder:
 
 - **Documentation**: [./docs](./docs/)
 - **GitHub Issues**: [Report bugs](https://github.com/sambitsargam/POLYVERSE/issues)
-- **Discord**: [Join community](https://discord.gg/polyverse)
-- **Email**: support@polyverse.com
 
 ## 🛡️ Security
 
@@ -240,15 +314,15 @@ For comprehensive technical documentation, see the `/docs` folder:
 
 ## 📊 Features Demo
 
-### Creator Showcase
-- Interactive creator profiles with realistic data
-- Subscription tiers and product displays
+### Creator Marketplace
+- Real-time creator profiles from Hypergraph data
+- Live subscription tiers and product displays  
 - Community activity and follower statistics
-- Professional UI with gradient designs
+- Professional UI with decentralized data backend
 
 ### Demo Pages
-- **`/`** - Main creator showcase
-- **`/demo/hypergraph`** - Interactive data demo
+- **`/`** - Main creator showcase with live data
+- **`/demo/hypergraph`** - Interactive Hypergraph data demo
 - **`/x402-demo`** - Subscription management (when implemented)
 - **`/filecoin-demo`** - Storage demo (when implemented)
 
