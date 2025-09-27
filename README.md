@@ -1,153 +1,124 @@
 # POLYVERSE — Decentralized Creator Economy Platform 🚀
 
-A comprehensive Web3 creator platform built with Next.js, TypeScript, and Tailwind CSS, featuring **x402 Protocol Subscriptions**, **Filecoin Lighthouse Storage**, and **KiraPay Payment Processing**.
+A Web3 creator platform that enables subscription-based content monetization through **x402 protocol payments**, **Filecoin decentralized storage**, and **KiraPay multi-chain processing**.
 
 ## ✨ Key Features
 
-### 🔐 **x402 Protocol Integration**
-- **Subscription-Based Payments**: EIP-3009 compliant USDC transfers on Polygon Amoy
-- **HTTP 402 Payment Required**: Industry-standard paywall protocol implementation
-- **Real Blockchain Transactions**: Actual on-chain settlements with transaction verification
-- **Auto Chain Switching**: Seamless Polygon Amoy network integration
+🔐 **x402 Protocol Subscriptions** - HTTP 402 paywall with real USDC payments on Polygon Amoy  
+🌐 **Filecoin Lighthouse Storage** - Decentralized, encrypted content hosting  
+💳 **KiraPay Integration** - Multi-chain crypto payment processing  
+📊 **Creator Dashboard** - Real-time analytics and subscriber management  
+🎯 **Token-Gated Content** - NFT and subscription-based access control  
 
-### 🌐 **Filecoin Lighthouse Storage**  
-- **Decentralized Storage**: Censorship-resistant content hosting on Filecoin network
-- **Client-Side Encryption**: Secure premium content with automatic encryption
-- **IPFS Gateway**: Fast global content delivery with redundancy
-- **Deal Monitoring**: Real-time Filecoin storage deal tracking and verification
+## 🚀 Quick Start
 
-### 💳 **KiraPay Payment Processing**
-- **Multi-Token Support**: Accept payments in USDC, ETH, MATIC, and more
-- **Cross-Chain Compatibility**: Ethereum, Polygon, and Filecoin network support
-- **Payment Gateway**: Seamless crypto-to-creator payment flows
-- **Transaction Security**: Cryptographic payment verification and settlement
-
-### 🎯 **Creator Tools**
-- **Subscription Management**: Tiered access plans with flexible pricing
-- **Analytics Dashboard**: Real-time earnings, subscriber metrics, and growth insights
-- **Token-Gated Content**: NFT and subscription-based access control
-- **Community Engagement**: Raffle systems and creator-fan interactions
-
-## 🏗️ Architecture Overview
-
-```mermaid
-graph TB
-    A[Frontend - Next.js] --> B[x402 Protocol Layer]
-    A --> C[Filecoin Lighthouse SDK]
-    A --> D[KiraPay Integration]
-    
-    B --> E[Polygon Amoy Network]
-    B --> F[USDC Smart Contract]
-    
-    C --> G[Filecoin Storage Network]
-    C --> H[IPFS Gateway]
-    
-    D --> I[Multi-Chain Payment Processing]
-    D --> J[Creator Revenue Settlement]
-    
-    E --> K[Real Transaction Hashes]
-    G --> L[Decentralized Content Storage]
-    I --> M[Cross-Chain Token Support]
+### 1. Installation
+```bash
+git clone https://github.com/sambitsargam/POLYVERSE.git
+cd POLYVERSE
+npm install
 ```
 
-## 💰 x402 Protocol Implementation
-
-POLYVERSE implements the x402 HTTP payment protocol for subscription-based content access using real blockchain transactions.
-
-### Protocol Features:
-- **HTTP 402 Responses**: Standard payment required status codes
-- **EIP-3009 Signatures**: TransferWithAuthorization for gasless USDC transfers  
-- **Facilitator Integration**: Official Polygon x402 facilitator (`https://x402.polygon.technology`)
-- **Real Settlement**: Actual blockchain transactions with verifiable transaction hashes
-
-### Subscription Flow:
-1. **Content Request**: User attempts to access premium content
-2. **402 Payment Required**: Server responds with payment requirements
-3. **Wallet Authorization**: User signs EIP-3009 TransferWithAuthorization
-4. **Facilitator Verification**: Payment validated via x402 facilitator network
-5. **Blockchain Settlement**: USDC transferred on Polygon Amoy with real TX hash
-6. **Content Access**: Subscription activated with on-chain proof
-
-### Example x402 Payment:
-```json
-{
-  "x402Version": 1,
-  "accepts": [{
-    "scheme": "exact",
-    "network": "polygon-amoy", 
-    "maxAmountRequired": "5000000", // $5.00 USDC
-    "asset": "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
-    "payTo": "0x90D9CD66FAdFF1C2Ba32C99A47C76532d08A704B",
-    "description": "Basic Weekly Subscription"
-  }]
-}
+### 2. Environment Setup
+```bash
+cp .env.example .env.local
+# Edit .env.local with your API keys
 ```
 
-## 🗄️ Filecoin Lighthouse Storage
+### 3. Required API Keys
+- **Lighthouse API**: Get from [lighthouse.storage](https://lighthouse.storage) for Filecoin storage
+- **KiraPay API**: Get from [kirapay.com](https://kirapay.com) for payment processing  
+- **Polygon Amoy**: Configure wallet for testnet USDC payments
 
-Decentralized storage infrastructure providing censorship-resistant content hosting and distribution.
-
-### Storage Features:
-- **Lighthouse SDK**: Direct integration with Filecoin storage network
-- **Automatic Encryption**: Client-side content encryption for premium access
-- **Deal Tracking**: Monitor Filecoin storage deals and network health
-- **IPFS Distribution**: Global content delivery via IPFS gateway network
-- **Access Control**: Token-gated content with NFT verification
-
-### Upload Process:
-1. **Content Upload**: Files encrypted and uploaded to Lighthouse
-2. **Filecoin Deal**: Storage deal created on Filecoin network
-3. **IPFS Hash**: Content available via IPFS with unique hash
-4. **Access Token**: NFT or subscription token minted for gated access
-5. **Global Distribution**: Content replicated across IPFS network
-
-### Code Example:
-```typescript
-import lighthouse from '@lighthouse-web3/sdk';
-
-// Upload encrypted content
-const uploadResponse = await lighthouse.uploadEncrypted(
-  file,
-  process.env.LIGHTHOUSE_API_KEY,
-  publicKey,
-  signedMessage
-);
-
-// Content hash: QmXXXXXX...
-console.log('IPFS Hash:', uploadResponse.data.Hash);
+### 4. Start Development
+```bash
+npm run dev
+# Open http://localhost:3000
 ```
 
-## 💳 KiraPay Integration
+## 🎯 How It Works
 
-Multi-chain payment processing system enabling seamless crypto payments for creator subscriptions.
+### For Creators
+1. **Upload Content** → Files stored on Filecoin via Lighthouse
+2. **Set Subscription Plans** → Configure pricing and access tiers
+3. **Receive Payments** → USDC payments via x402 protocol
+4. **Track Analytics** → Monitor subscribers and earnings
 
-### Payment Features:
-- **Multi-Token Support**: USDC, ETH, MATIC, FIL, and custom tokens
-- **Cross-Chain**: Ethereum mainnet, Polygon, and Filecoin network support  
-- **Payment Gateway**: Embedded checkout with wallet connection
-- **Revenue Settlement**: Automatic creator revenue distribution
-- **Transaction Security**: Cryptographic verification and fraud protection
+### For Subscribers  
+1. **Connect Wallet** → Support for major Web3 wallets
+2. **Choose Plan** → Select subscription tier
+3. **Pay with USDC** → Real blockchain transactions on Polygon Amoy
+4. **Access Content** → Token-gated premium content
 
-### Supported Networks:
-- **Ethereum Mainnet**: USDC, ETH, DAI payments
-- **Polygon**: Low-cost USDC transfers and x402 subscriptions
-- **Filecoin**: FIL token payments and storage deal funding
+## 🛠️ Technology Stack
 
-### Integration Example:
-```typescript
-import { KiraPaySDK } from 'kirapay';
+- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
+- **Blockchain**: Polygon Amoy, x402 Protocol, EIP-3009 signatures
+- **Storage**: Filecoin network via Lighthouse SDK
+- **Payments**: KiraPay multi-chain processing
+- **Wallet**: RainbowKit, Wagmi, viem
 
-const payment = await KiraPaySDK.createPayment({
-  amount: '5.00',
-  currency: 'USDC',
-  network: 'polygon',
-  recipient: creatorWallet,
-  metadata: {
-    subscriptionId: 'basic-weekly',
-    platform: 'polyverse'
-  }
-});
+## 📚 Documentation
+
+Comprehensive technical documentation is available in the `/docs` folder:
+
+- **[x402 Protocol Guide](./docs/x402-protocol.md)** - HTTP 402 implementation details
+- **[Filecoin Storage Guide](./docs/filecoin-lighthouse.md)** - Decentralized storage integration  
+- **[KiraPay Integration](./docs/kirapay-payments.md)** - Payment processing setup
+- **[API Reference](./docs/api-reference.md)** - Complete API documentation
+- **[Deployment Guide](./docs/deployment.md)** - Production deployment instructions
+
+## 🧪 Demo & Testing
+
+### Live Demo
+Visit our live demo at: [https://polyverse-demo.vercel.app](https://polyverse-demo.vercel.app)
+
+### Test x402 Protocol
+```bash
+# Test subscription purchase flow
+curl -X POST http://localhost:3000/api/subscriptions/purchase \
+  -H "Content-Type: application/json" \
+  -d '{"planId":"basic-weekly"}'
+
+# Expected: HTTP 402 Payment Required with x402 headers
 ```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](./docs/contributing.md) for details.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📞 Support
+
+- **Documentation**: [./docs](./docs/)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/sambitsargam/POLYVERSE/issues)
+- **Discord**: [Join our community](https://discord.gg/polyverse)
+- **Email**: support@polyverse.com
+
+## 🏆 Roadmap
+
+- [x] x402 Protocol Integration with Polygon Amoy
+- [x] Filecoin Lighthouse Storage
+- [x] KiraPay Payment Processing
+- [ ] NFT Access Token Minting
+- [ ] Cross-Chain Subscription Bridging
+- [ ] Mobile App Development
+- [ ] DAO Governance Implementation
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with ❤️ for the decentralized creator economy**
+
+*Empowering creators through Web3 technology and sustainable blockchain monetization.*
 
 ## 🚀 Quick Start
 
