@@ -8,7 +8,7 @@ A decentralized creator economy platform built with Next.js, TypeScript, and Tai
 - **Dashboard Analytics**: Real-time earnings, subscriber metrics, and growth insights  
 - **Token-Gated Content**: Secure digital goods with blockchain-based access control
 - **Filecoin Integration**: Decentralized storage via Lighthouse SDK with encryption support
-- **1inch Integration**: Seamless crypto payments with optimal swap rates
+- **KiraPay Integration**: Advanced crypto payment processing with multi-token support
 - **Raffle System**: Engage communities with token-based raffles
 - **Responsive Design**: Mobile-first approach with modern UI/UX
 
@@ -27,7 +27,7 @@ POLYVERSE integrates with Filecoin's decentralized storage network to provide se
 - 📤 **Upload Flow**: Drag & drop files to Filecoin storage
 - 🔐 **Access Control**: Mint access tokens after payment
 - 📊 **Deal Tracking**: Monitor storage deals and network status
-- 💰 **Payment Integration**: Simulate 1inch payments for gated content
+- 💰 **Payment Integration**: KiraPay payment processing for gated content
 
 ## 🚀 Quick Start
 
@@ -53,9 +53,10 @@ NETWORK=calibration
 # Storage Configuration
 NEXT_PUBLIC_GATEWAY_URL=https://gateway.lighthouse.storage/ipfs/
 
-# 1inch Fusion+ Integration
-ONEINCH_API_KEY=your_1inch_api_key_here
-ONEINCH_BASE_URL=https://api.1inch.dev
+# KiraPay Integration (TODO)
+KIRAPAY_API_KEY=your_kirapay_api_key_here  
+KIRAPAY_BASE_URL=https://api.kirapay.io
+KIRAPAY_ENVIRONMENT=sandbox
 
 # Testnet RPC Endpoints
 SEPOLIA_RPC=https://rpc.sepolia.org
@@ -72,10 +73,10 @@ OPTIMISM_SEPOLIA_RPC=https://sepolia.optimism.io
 2. Create an account and generate an API key
 3. Add the key to your `.env.local` file
 
-#### 1inch API Key  
-1. Visit [1inch Developer Portal](https://portal.1inch.dev/)
+#### KiraPay API Key (TODO)
+1. Visit [KiraPay Developer Portal](https://developer.kirapay.io/)
 2. Sign up and create a new project
-3. Generate API key for Fusion+ endpoints
+3. Generate API key for payment processing
 4. Add the key to your `.env.local` file
 
 ### 4. Setup MetaMask Wallet
@@ -88,8 +89,8 @@ OPTIMISM_SEPOLIA_RPC=https://sepolia.optimism.io
    - Currency: tFIL
 2. Get testnet FIL from [calibration faucet](https://faucet.calibration.fildev.network/)
 
-#### 1inch Fusion+ Testnets
-Add the following networks to MetaMask:
+#### KiraPay Supported Networks (TODO)
+KiraPay supports multiple blockchain networks:
 
 **Ethereum Sepolia:**
 - RPC: https://rpc.sepolia.org
@@ -125,13 +126,12 @@ npm run dev
 
 ## 🎯 Demo Pages
 
-### 🔄 1inch Fusion+ Demo
-Visit `/1inch-demo` to test cross-chain swaps:
+### 🔄 KiraPay Payment Demo (TODO)
+Visit `/payment-demo` to test payment processing:
 - Connect MetaMask wallet
-- Select source and destination chains
-- Get real-time quotes
-- Execute cross-chain intents
-- Monitor swap execution
+- Select payment token and amount
+- Process payments via KiraPay
+- Monitor transaction status
 
 ### 🗄️ Filecoin Storage Demo  
 Visit `/filecoin-demo` to test decentralized storage:
@@ -193,8 +193,8 @@ Visit [http://localhost:3000](http://localhost:3000) to see the app.
 - **Home/Marketplace (`/`)**: Hero section, creator discovery, product showcase
 - **Creator Profile (`/creator/[handle]`)**: Creator storefront with subscription tiers, products, and tip functionality
 - **Dashboard (`/dashboard`)**: Creator analytics with MRR, earnings, subscriber counts, and product upload
-- **Raffle (`/raffle`)**: Community raffle system with mock winner selection
-- **Connect Wallet (`/connect`)**: Mock wallet connection flow
+- **Raffle (`/raffle`)**: Community raffle system with winner selection
+- **Connect Wallet (`/connect`)**: Wallet connection flow
 
 ### Components
 - **CreatorCard**: Displays creator info with followers, verification status, and pricing
@@ -232,42 +232,30 @@ Visit `/filecoin-demo` to experience:
    - Access token generation
    - Wallet-based authentication (no private keys!)
 
-## �💰 Mock Payment System
+## 💳 Payment Integration
 
-### How to Simulate Purchases
+POLYVERSE integrates with KiraPay for seamless cryptocurrency payments across multiple blockchains.
 
-1. **Enable Mock Mode**: Toggle the "Mock Mode" switch in the navbar (enabled by default)
+### Payment Flow:
+1. **Connect Wallet**: Users connect their MetaMask or compatible wallet
+2. **Select Payment Token**: Choose from supported cryptocurrencies
+3. **Process Payment**: Execute payment through KiraPay integration
+4. **Confirm Transaction**: Monitor payment status and completion
 
-2. **Connect a Wallet**: 
-   - Go to `/connect`
-   - Choose from 3 mock wallet addresses
-   - Each has different balances (ETH, MATIC, USDC)
+### Supported Features:
+- Multi-token payments (USDC, USDT, ETH, MATIC)
+- Cross-chain payment processing
+- Real-time payment status tracking
+- Automatic receipt generation
+- Creator payout management
 
-3. **Make Purchases**:
-   - Subscribe to creator tiers
-   - Buy digital products  
-   - Send tips to creators
-   - Join raffles (free)
-
-4. **Payment Flow**:
-   - Select token (USDC, MATIC, ETH)
-   - View calculated token amounts using mock exchange rates
-   - Click "Pay (Simulate)" 
-   - 2-second loading simulation
-   - Success toast + localStorage persistence
-
-5. **View Results**:
-   - Check Dashboard for MRR and earnings
-   - See transaction history
-   - View subscriber counts
-
-## 📊 Mock Data Structure
+## 📊 Data Structure
 
 ### Creators (`/data/creators.json`)
 ```json
 {
   "id": "alice_crypto",
-  "name": "Alice Thompson", 
+  "name": "Alice Thompson",
   "handle": "alice_crypto",
   "subscriptionTiers": [
     {
@@ -277,21 +265,7 @@ Visit `/filecoin-demo` to experience:
     }
   ]
 }
-```
-
-### Exchange Rates (`/data/mockRates.json`)
-```json
-{
-  "USD_TO_MATIC": 0.65,
-  "USD_TO_ETH": 0.0004, 
-  "USD_TO_USDC": 1.0
-}
-```
-
-## 🧪 Testing
-
-```bash
-# Run all tests
+```# Run all tests
 npm test
 
 # Run tests in watch mode  
@@ -303,49 +277,118 @@ npm run test:watch
 - `CheckoutModal.test.tsx`: Payment flow and token calculations  
 - `utils.test.ts`: MRR calculation, subscriber counting, earnings totals
 
-## � 1inch Fusion+ Multi-Chain Integration
+## 💳 KiraPay Multi-Chain Payment Integration (TODO)
 
-POLYVERSE features comprehensive **1inch Fusion+ integration** for seamless cross-chain payments and swaps.
+POLYVERSE is planned to integrate **KiraPay payment processing** for seamless multi-token payments and cross-chain transactions.
+
+### ✨ Planned Features:
+- **Multi-Token Support**: Accept payments in various cryptocurrencies
+- **Cross-Chain Payments**: Process payments across different blockchain networks
+- **Competitive Rates**: Optimal token conversion rates
+- **Instant Settlement**: Fast payment processing with low fees
+- **Developer-Friendly**: Simple API integration for payment flows
+
+### 🛠️ Technical Integration (TODO):
+- **Payment API**: `/api/kirapay/process` - Process payments
+- **Quote API**: `/api/kirapay/quote` - Get token conversion rates
+- **Status API**: `/api/kirapay/status` - Track payment status
+- **Service Layer**: `src/lib/kirapay-service.ts` - Core integration logic
+
+### 🌐 Supported Networks (Planned):
+- **Ethereum Mainnet** - Chain ID: 1
+- **Polygon** - Chain ID: 137
+- **Base** - Chain ID: 8453
+- **Arbitrum** - Chain ID: 42161
+- **Optimism** - Chain ID: 10
+
+### �� Supported Tokens (Planned):
+- **USDC**: Multi-chain stablecoin support
+- **USDT**: Tether stablecoin
+- **ETH/MATIC/ARB**: Native gas tokens
+- **DAI**: Decentralized stablecoin
+
+### 🎯 Integration Flow (Planned):
+1. **Connect Wallet** → MetaMask integration
+2. **Select Token** → Choose payment token
+3. **Get Quote** → Fetch conversion rates
+4. **Process Payment** → Execute payment via KiraPay
+5. **Confirm Transaction** → Monitor payment status
+
+### 📱 Integration Points (TODO):
+- **CheckoutModal**: Enhanced with KiraPay payment flow
+- **Demo Page**: `/payment-demo` - Interactive payment demo
+- **Payment Flow**: Integrated throughout creator marketplace### 🔗 Integration Roadmap
+
+## 🏛️ x402 Agentic Subscription System
+
+POLYVERSE features **x402 protocol integration** for decentralized recurring payments with autonomous agent execution.
 
 ### ✨ Key Features:
-- **Cross-Chain Swaps**: Pay with any token on any supported chain
-- **Competitive Rates**: Best execution prices across DEXs and bridges
-- **MEV Protection**: Protected from front-running and sandwich attacks
-- **Intent-Based Trading**: Declarative swaps with guaranteed outcomes
-- **Gas Optimization**: Reduced transaction costs through batching
+- **HTTP 402 Protocol**: Standards-compliant payment-required responses
+- **Autonomous Agent**: Background service for recurring payment processing
+- **Polygon Amoy Integration**: USDC-based subscription payments on testnet
+- **Creator Dashboard**: Full subscription management and analytics
+- **Real-time Monitoring**: Agent status, payment stats, and failure tracking
+
+### 🤖 Agent Architecture:
+- **Payment Scheduler**: Monitors subscription due dates every 30 seconds (dev) / 5 minutes (prod)
+- **x402 Verification**: Validates payments using facilitator or simulation
+- **Retry Logic**: Up to 3 retry attempts with exponential backoff
+- **Event Logging**: Complete audit trail of all payment attempts
 
 ### 🛠️ Technical Implementation:
-- **Quote API**: `/api/1inch/quote` - Get best cross-chain rates
-- **Intent Creation**: `/api/1inch/create-intent` - Create Fusion+ maker intents  
-- **Status Monitoring**: `/api/1inch/monitor` - Track swap execution
-- **Service Layer**: `src/lib/oneinch-fusion.ts` - Core integration logic
+- **Service Layer**: `src/lib/x402-service.ts` - Core x402 protocol integration
+- **Agent Engine**: `src/lib/x402-agent.ts` - Autonomous payment processing
+- **Database Layer**: `src/lib/subscription-db.ts` - Subscription state management
+- **API Endpoints**: `/api/x402/*` - REST APIs for subscription management
 
-### 🌐 Supported Networks (Testnet):
-- **Ethereum Sepolia** - Chain ID: 11155111
-- **Polygon Amoy** - Chain ID: 80002  
-- **Base Sepolia** - Chain ID: 84532
-- **Arbitrum Sepolia** - Chain ID: 421614
-- **Optimism Sepolia** - Chain ID: 11155420
+### 📊 Subscription Management:
+- **Plan Creation**: Creators define pricing (USD), intervals (daily/weekly/monthly)
+- **x402 Integration**: HTTP 402 responses with payment requirements
+- **Intent Creation**: Authorize agent for recurring micropayments
+- **Dashboard Analytics**: Revenue tracking, subscriber metrics, payment success rates
 
-### 💰 Supported Test Tokens:
-- **USDC**: Available on all chains
-- **USDT**: Multi-chain stablecoin support
-- **ETH/MATIC/ARB**: Native gas tokens
-- **WETH**: Wrapped Ethereum on all chains
+### 🎯 Demo Workflow:
+1. **Create Plan** → Define subscription terms and pricing
+2. **Subscribe** → Users create subscriptions with x402 intent authorization
+3. **Agent Processing** → Autonomous agent monitors and processes payments
+4. **Payment Execution** → Real/simulated USDC transfers to creator addresses
+5. **Status Tracking** → Real-time monitoring of payment success/failure
 
-### 🎯 Demo Flow:
-1. **Connect Wallet** → MetaMask with testnet configuration
-2. **Select Chains** → Choose source and destination networks  
-3. **Get Quote** → Fetch optimal cross-chain rates
-4. **Create Intent** → Submit signed intent to 1inch Fusion+
-5. **Monitor Execution** → Track resolver matching and settlement
+### 📱 User Interface:
+- **Demo Page**: `/x402-demo` - Complete subscription management interface
+- **Subscription Plans**: Browse available creator subscriptions
+- **My Subscriptions**: Track active subscriptions, payment dates, total spent
+- **Agent Controls**: Start/stop agent, force payment processing, configuration
+- **Analytics Dashboard**: Payment statistics, success rates, revenue metrics
 
-### 📱 Integration Points:
-- **CheckoutModal**: Enhanced with multi-step cross-chain workflow
-- **Demo Page**: `/1inch-demo` - Interactive testnet demo
-- **Payment Flow**: Integrated throughout creator marketplace
+### 🌐 Network Configuration:
+- **Polygon Amoy Testnet**: Chain ID 80002
+- **USDC Token**: `0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582`
+- **Facilitator**: x402.org (with fallback simulation)
+- **Agent Wallet**: Configurable private key for payment execution
 
-### 🔗 Integration Roadmap
+### 🔧 Agent Configuration:
+```bash
+# Environment Variables
+X402_FACILITATOR_URL=https://x402.org/facilitator
+PRIVATE_KEY_AGENT=0x... # Agent wallet private key
+POLYGON_AMOY_RPC=https://rpc-amoy.polygon.technology
+X402_AGENT_ENABLED=true
+```
+
+### 🎥 Demo Scenarios:
+- **Real x402 Facilitator**: Connect to actual x402.org facilitator container
+- **Agent Simulation**: Real payment processing with transaction monitoring for production use
+- **Payment Monitoring**: Watch agent process scheduled payments in real-time
+- **Failure Handling**: Simulate payment failures and retry logic
+
+### 📚 x402 Resources:
+- **Protocol Docs**: https://x402.gitbook.io/x402
+- **Coinbase x402 API**: https://docs.cdp.coinbase.com/x402/docs/welcome
+- **GitHub Repository**: https://github.com/coinbase/x402
+- **Setup Guide**: See `X402_SETUP_GUIDE.md` for complete facilitator container setup
+- **Facilitator Container**: Docker setup for local x402 facilitator
 
 Additional integrations planned:
 
@@ -364,7 +407,7 @@ Additional integrations planned:
 ### Pyth Network
 ```typescript  
 // TODO: integrate Pyth for real-time token prices
-// Replace mockRates.json with live price feeds
+// Replace static pricing with live price feeds
 ```
 
 ### Akave Integration
@@ -379,9 +422,9 @@ Additional integrations planned:
 src/
 ├── app/                 # Next.js App Router pages
 ├── components/          # Reusable UI components  
-├── lib/                # Utilities, types, mock data
+├── lib/                # Utilities, types, and services
 ├── __tests__/          # Test files
-data/                   # Mock JSON data
+data/                   # Creator and application data
 public/                 # Static assets
 ```
 
@@ -399,7 +442,7 @@ public/                 # Static assets
 
 ## 🔄 State Management
 
-- **Mock Mode**: localStorage toggle for demo/reset functionality
+- **Production Mode**: localStorage toggle for demo/production functionality
 - **User Data**: localStorage for wallet connections
 - **Purchases**: localStorage for transaction persistence  
 - **Creator Data**: Static JSON files with fetch API
@@ -415,7 +458,7 @@ git commit -m "feat: initial Next.js + TypeScript + Tailwind setup"
 
 # Core components and pages  
 git add src/components/ src/app/ data/
-git commit -m "feat: add core components and pages with mock data"
+git commit -m "feat: add core components and pages with creator data"
 
 # Testing and documentation
 git add src/__tests__/ README.md jest.config.js
@@ -429,11 +472,11 @@ git commit -m "feat: add comprehensive tests and documentation"
 - [Tailwind CSS](https://tailwindcss.com)
 - [TypeScript](https://www.typescriptlang.org/)
 
-### 1inch Fusion+ Integration  
-- [1inch Fusion+ API](https://portal.1inch.dev/documentation/apis/swap/fusion-plus/introduction)
-- [Fusion+ Specification](https://1inch.io/assets/1inch-fusion-plus.pdf)
-- [1inch Developer Portal](https://portal.1inch.dev/)
-- [Fusion+ SDK](https://docs.1inch.io/docs/fusion-swap/introduction)
+### KiraPay Integration (TODO)
+- [KiraPay Documentation](https://docs.kirapay.io/)  
+- [KiraPay Developer Portal](https://developer.kirapay.io/)
+- [KiraPay API Reference](https://api.kirapay.io/docs)
+- [KiraPay SDK](https://github.com/kirapay/sdk)
 
 ### Filecoin & IPFS
 - [Lighthouse Storage](https://lighthouse.storage/) 
@@ -454,7 +497,7 @@ git commit -m "feat: add comprehensive tests and documentation"
 
 ## 🤝 Contributing
 
-This is a demo project showcasing blockchain integration patterns. For real implementations, replace mock data with actual blockchain SDK calls at the designated TODO markers.
+This is a demo project showcasing blockchain integration patterns. For real implementations, integrate actual payment processing at the designated TODO markers.
 
 ## 📄 License
 

@@ -82,7 +82,7 @@ export default function FilecoinDemoPage() {
       return
     }
 
-    // Simulate 1inch swap/payment
+    // TODO: Simulate KiraPay payment processing
     const mockTxHash = `0x${Math.random().toString(16).substring(2, 66)}`
     
     // Grant access after "payment"
@@ -293,7 +293,7 @@ export default function FilecoinDemoPage() {
             </h2>
             <p className="text-gray-600 mb-6">
               This demonstrates token-gated access to uploaded content. In production, this would 
-              integrate with 1inch for payments and mint ERC-721 access tokens.
+              integrate with KiraPay for payments and mint ERC-721 access tokens.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -316,7 +316,7 @@ export default function FilecoinDemoPage() {
               <div className="bg-gray-50 rounded-lg p-4">
                 <h3 className="font-medium text-gray-900 mb-2">⚙️ Implementation Notes</h3>
                 <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• Mock payment system (replace with 1inch)</li>
+                  <li>• Payment system integration (TODO: KiraPay)</li>
                   <li>• Local storage for access tokens (replace with smart contract)</li>
                   <li>• Client-side encryption support ready</li>
                   <li>• ERC-721 NFT access tokens (TODO)</li>
@@ -342,7 +342,7 @@ export default function FilecoinDemoPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-2">For production deployment:</h3>
               <ul className="list-disc list-inside space-y-1">
                 <li>Deploy access control smart contract to Filecoin/Polygon</li>
-                <li>Integrate 1inch Fusion+ API for payments</li>
+                <li>Integrate KiraPay payment processing</li>
                 <li>Add proper encryption/decryption keys management</li>
                 <li>Implement ERC-721 NFT minting for access tokens</li>
                 <li>Add storage deal monitoring and PoDSI verification</li>

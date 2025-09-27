@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { CheckBadgeIcon, UserGroupIcon, HeartIcon, GiftIcon } from '@heroicons/react/24/solid';
-import { Creator, Product, SubscriptionTier } from '@/lib/types';
-import { MockDataStore } from '@/lib/mockData';
+import { Creator, SubscriptionTier, Product } from '@/lib/types';
 import { formatNumber } from '@/lib/utils';
 import { TierCard } from '@/components/TierCard';
 import { ProductCard } from '@/components/ProductCard';
@@ -35,15 +34,17 @@ export default function CreatorPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [creatorsData, productsData] = await Promise.all([
-          MockDataStore.getCreators(),
-          MockDataStore.getProducts()
+        const [creatorsRes, productsRes] = await Promise.all([
+          fetch('/data/creators.json'),
+          fetch('/data/products.json')
         ]);
+        const creatorsData = await creatorsRes.json();
+        const productsData = await productsRes.json();
         
-        const foundCreator = creatorsData.find(c => c.handle === handle);
+        const foundCreator = creatorsData.find((c: any) => c.handle === handle);
         setCreator(foundCreator || null);
         
-        const creatorProducts = productsData.filter(p => p.creatorId === foundCreator?.id);
+        const creatorProducts = productsData.filter((p: any) => p.creatorId === foundCreator?.id);
         setProducts(creatorProducts);
       } catch (error) {
         console.error('Error fetching creator data:', error);

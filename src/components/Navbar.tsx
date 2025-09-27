@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { MockDataStore } from '@/lib/mockData';
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,10 +11,12 @@ export const Navbar = () => {
   const handleMockModeToggle = () => {
     const newMode = !isMockMode;
     setIsMockMode(newMode);
-    MockDataStore.setMockMode(newMode);
+    localStorage.setItem('mockMode', JSON.stringify(newMode));
     if (newMode) {
-      // Reset to mock mode
-      MockDataStore.clearAllData();
+      // Reset to mock mode - clear localStorage data
+      localStorage.removeItem('purchaseHistory');
+      localStorage.removeItem('subscriptions');
+      localStorage.removeItem('selectedWallet');
       window.location.reload();
     }
   };
@@ -43,8 +44,11 @@ export const Navbar = () => {
             <Link href="/dashboard" className="text-gray-700 hover:text-primary transition-colors">
               Dashboard
             </Link>
-            <Link href="/1inch-demo" className="text-gray-700 hover:text-primary transition-colors">
-              1inch Demo
+            <Link href="/payment-demo" className="text-gray-700 hover:text-primary transition-colors">
+              Payment Demo
+            </Link>
+            <Link href="/x402-demo" className="text-gray-700 hover:text-primary transition-colors">
+              x402 Subscriptions
             </Link>
             <Link href="/raffle" className="text-gray-700 hover:text-primary transition-colors">
               Raffle
@@ -111,11 +115,18 @@ export const Navbar = () => {
               Dashboard
             </Link>
             <Link
-              href="/1inch-demo"
+              href="/payment-demo"
               className="block text-gray-700 hover:text-primary transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              1inch Demo
+              Payment Demo
+            </Link>
+            <Link
+              href="/x402-demo"
+              className="block text-gray-700 hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              x402 Subscriptions
             </Link>
             <Link
               href="/raffle"

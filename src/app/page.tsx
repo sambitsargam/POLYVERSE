@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MagnifyingGlassIcon, PlayIcon, SparklesIcon, RocketLaunchIcon, ShieldCheckIcon, CurrencyDollarIcon, CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import { Creator, Product } from '@/lib/types';
-import { MockDataStore } from '@/lib/mockData';
 import { CreatorCard } from '@/components/CreatorCard';
 import { ProductCard } from '@/components/ProductCard';
 import { CheckoutModal } from '@/components/CheckoutModal';
@@ -28,25 +27,28 @@ export default function HomePage() {
     creatorId: '',
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
+    useEffect(() => {
+    const loadData = async () => {
       try {
-        const [creatorsData, productsData] = await Promise.all([
-          MockDataStore.getCreators(),
-          MockDataStore.getProducts()
+        const [creatorsRes, productsRes] = await Promise.all([
+          fetch('/data/creators.json'),
+          fetch('/data/products.json')
         ]);
+        
+        const creatorsData = await creatorsRes.json();
+        const productsData = await productsRes.json();
         
         setCreators(creatorsData);
         setProducts(productsData);
         setFilteredCreators(creatorsData);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error loading data:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchData();
+    loadData();
   }, []);
 
   useEffect(() => {

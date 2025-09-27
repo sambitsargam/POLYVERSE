@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { BanknotesIcon, UsersIcon, ChartBarIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { Creator, Purchase, Product, DashboardStats } from '@/lib/types';
-import { MockDataStore } from '@/lib/mockData';
 import { formatCurrency, formatNumber, calculateMRR, getActiveSubscribers, getTotalEarnings } from '@/lib/utils';
 import { SmallLineChart } from '@/components/SmallLineChart';
 import { FileUploader } from '@/components/FileUploader';
@@ -41,8 +40,9 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const creatorsData = await MockDataStore.getCreators();
-        const purchases = MockDataStore.getPurchases();
+        const creatorsRes = await fetch('/data/creators.json');
+        const creatorsData = await creatorsRes.json();
+        const purchases = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
         
         setCreators(creatorsData);
         
@@ -51,7 +51,7 @@ export default function DashboardPage() {
         const totalEarnings = getTotalEarnings(purchases);
         const activeSubscribers = getActiveSubscribers(purchases);
         const recentTransactions = purchases
-          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .slice(0, 10);
 
         setStats({

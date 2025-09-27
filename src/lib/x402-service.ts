@@ -106,8 +106,8 @@ export class X402Service {
 
   private initializeWallet() {
     const privateKey = process.env.PRIVATE_KEY_AGENT as `0x${string}`;
-    if (!privateKey) {
-      console.warn('No agent private key provided. Agent payment simulation only.');
+    if (!privateKey || privateKey.length !== 66 || !privateKey.startsWith('0x')) {
+      console.warn('No valid agent private key provided. Agent payment simulation only.');
       return;
     }
 

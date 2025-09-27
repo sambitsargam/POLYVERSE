@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { WalletIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { showToast } from '@/components/Toast';
-import { MockDataStore } from '@/lib/mockData';
 
 const MOCK_WALLETS = [
   {
@@ -52,7 +51,7 @@ export default function ConnectPage() {
         createdAt: new Date().toISOString(),
       };
 
-      MockDataStore.saveUser(mockUser);
+      localStorage.setItem('selectedWallet', JSON.stringify(mockUser));
       
       showToast(`Successfully connected to ${wallet.name}!`, 'success');
       
@@ -69,7 +68,14 @@ export default function ConnectPage() {
     }
   };
 
-  const currentUser = MockDataStore.getUser();
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  
+  useEffect(() => {
+    const user = typeof window !== 'undefined' 
+      ? JSON.parse(localStorage.getItem('selectedWallet') || 'null')
+      : null;
+    setCurrentUser(user);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 py-12">
