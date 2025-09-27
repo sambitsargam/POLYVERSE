@@ -216,7 +216,7 @@ export class FilecoinStorageService {
       renew_threshold: options.renewThreshold || 240,
       miner: options.miners || [],
       network: options.network || 'calibration',
-      add_mock_data: 2
+      add_metadata: 2
     }
   }
 }

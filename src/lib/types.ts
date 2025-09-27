@@ -52,13 +52,6 @@ export interface Purchase {
   status: 'pending' | 'completed' | 'failed';
 }
 
-export interface MockRates {
-  USD_TO_MATIC: number;
-  USD_TO_ETH: number;
-  USD_TO_USDC: number;
-  lastUpdated: string;
-}
-
 export interface User {
   id: string;
   walletAddress: string;

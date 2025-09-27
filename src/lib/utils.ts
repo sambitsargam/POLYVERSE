@@ -1,4 +1,4 @@
-import { Creator, Product, Purchase, MockRates } from './types';
+import { Creator, Product, Purchase } from './types';
 
 export const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('en-US', {
@@ -17,26 +17,9 @@ export const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-export const calculateTokenAmount = (usdAmount: number, token: 'MATIC' | 'ETH' | 'USDC', rates: MockRates): number => {
-  switch (token) {
-    case 'MATIC':
-      return usdAmount * rates.USD_TO_MATIC;
-    case 'ETH':
-      return usdAmount * rates.USD_TO_ETH;
-    case 'USDC':
-      return usdAmount * rates.USD_TO_USDC;
-    default:
-      return usdAmount;
-  }
-};
-
 export const formatTokenAmount = (amount: number, token: string): string => {
   const decimals = token === 'ETH' ? 6 : 2;
   return `${amount.toFixed(decimals)} ${token}`;
-};
-
-export const generateMockTransactionHash = (): string => {
-  return '0x' + Math.random().toString(16).substr(2, 64);
 };
 
 export const calculateMRR = (creators: Creator[], purchases: Purchase[]): number => {
