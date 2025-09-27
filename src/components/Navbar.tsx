@@ -43,11 +43,14 @@ export const Navbar = () => {
             <Link href="/dashboard" className="text-gray-700 hover:text-primary transition-colors">
               Dashboard
             </Link>
+            <Link href="/1inch-demo" className="text-gray-700 hover:text-primary transition-colors">
+              1inch Demo
+            </Link>
             <Link href="/raffle" className="text-gray-700 hover:text-primary transition-colors">
               Raffle
             </Link>
             <Link href="/filecoin-demo" className="text-gray-700 hover:text-primary transition-colors">
-              Demo
+              Filecoin Demo
             </Link>
           </div>
 
@@ -108,6 +111,13 @@ export const Navbar = () => {
               Dashboard
             </Link>
             <Link
+              href="/1inch-demo"
+              className="block text-gray-700 hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              1inch Demo
+            </Link>
+            <Link
               href="/raffle"
               className="block text-gray-700 hover:text-primary transition-colors"
               onClick={() => setIsMenuOpen(false)}
@@ -119,7 +129,7 @@ export const Navbar = () => {
               className="block text-gray-700 hover:text-primary transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              Demo
+              Filecoin Demo
             </Link>
             <div className="pt-4 border-t border-gray-100">
               <label className="flex items-center space-x-2 text-sm mb-4">

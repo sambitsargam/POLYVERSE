@@ -52,27 +52,93 @@ NETWORK=calibration
 
 # Storage Configuration
 NEXT_PUBLIC_GATEWAY_URL=https://gateway.lighthouse.storage/ipfs/
+
+# 1inch Fusion+ Integration
+ONEINCH_API_KEY=your_1inch_api_key_here
+ONEINCH_BASE_URL=https://api.1inch.dev
+
+# Testnet RPC Endpoints
+SEPOLIA_RPC=https://rpc.sepolia.org
+POLYGON_AMOY_RPC=https://rpc-amoy.polygon.technology
+BASE_SEPOLIA_RPC=https://sepolia.base.org
+ARBITRUM_SEPOLIA_RPC=https://sepolia-rollup.arbitrum.io/rpc
+OPTIMISM_SEPOLIA_RPC=https://sepolia.optimism.io
 ```
 
-### 3. Get Lighthouse API Key
+### 3. Get API Keys
+
+#### Lighthouse API Key
 1. Visit [files.lighthouse.storage](https://files.lighthouse.storage/)
 2. Create an account and generate an API key
 3. Add the key to your `.env.local` file
 
+#### 1inch API Key  
+1. Visit [1inch Developer Portal](https://portal.1inch.dev/)
+2. Sign up and create a new project
+3. Generate API key for Fusion+ endpoints
+4. Add the key to your `.env.local` file
+
 ### 4. Setup MetaMask Wallet
-1. Install MetaMask browser extension
-2. Add Filecoin Calibration testnet:
+
+#### Filecoin Network
+1. Add Filecoin Calibration testnet:
    - Network name: Filecoin Calibration
    - RPC URL: https://api.calibration.node.glif.io/rpc/v1
    - Chain ID: 314159
    - Currency: tFIL
-3. Get testnet FIL from [calibration faucet](https://faucet.calibration.fildev.network/)
+2. Get testnet FIL from [calibration faucet](https://faucet.calibration.fildev.network/)
 
-### 4. Run Development Server
+#### 1inch Fusion+ Testnets
+Add the following networks to MetaMask:
+
+**Ethereum Sepolia:**
+- RPC: https://rpc.sepolia.org
+- Chain ID: 11155111
+- Currency: ETH
+
+**Polygon Amoy:**
+- RPC: https://rpc-amoy.polygon.technology
+- Chain ID: 80002
+- Currency: MATIC
+
+**Base Sepolia:**
+- RPC: https://sepolia.base.org
+- Chain ID: 84532
+- Currency: ETH
+
+**Arbitrum Sepolia:**
+- RPC: https://sepolia-rollup.arbitrum.io/rpc
+- Chain ID: 421614
+- Currency: ETH
+
+**Get Testnet Tokens:**
+- [Sepolia Faucet](https://sepoliafaucet.com/)
+- [Polygon Amoy Faucet](https://faucet.polygon.technology/)
+- [Base Sepolia Faucet](https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet)
+- [Arbitrum Sepolia Faucet](https://faucet.quicknode.com/arbitrum/sepolia)
+
+### 5. Run Development Server
 ```bash
 npm run dev
 # Open http://localhost:3000
 ```
+
+## 🎯 Demo Pages
+
+### 🔄 1inch Fusion+ Demo
+Visit `/1inch-demo` to test cross-chain swaps:
+- Connect MetaMask wallet
+- Select source and destination chains
+- Get real-time quotes
+- Execute cross-chain intents
+- Monitor swap execution
+
+### 🗄️ Filecoin Storage Demo  
+Visit `/filecoin-demo` to test decentralized storage:
+- Upload files to IPFS via Lighthouse
+- Real Filecoin deal creation
+- Token-gated access control
+- Deal status monitoring
 
 ## 🔧 Filecoin Setup Guide
 
@@ -237,26 +303,56 @@ npm run test:watch
 - `CheckoutModal.test.tsx`: Payment flow and token calculations  
 - `utils.test.ts`: MRR calculation, subscriber counting, earnings totals
 
-## 🔗 Integration Roadmap
+## � 1inch Fusion+ Multi-Chain Integration
 
-The codebase includes TODO comments showing where real blockchain integrations will be added:
+POLYVERSE features comprehensive **1inch Fusion+ integration** for seamless cross-chain payments and swaps.
 
-### 1inch Fusion+ Integration
-```typescript
-// TODO: integrate 1inch Fusion+ here
-// In CheckoutModal.tsx - replace MockDataStore.simulatePayment()
-```
+### ✨ Key Features:
+- **Cross-Chain Swaps**: Pay with any token on any supported chain
+- **Competitive Rates**: Best execution prices across DEXs and bridges
+- **MEV Protection**: Protected from front-running and sandwich attacks
+- **Intent-Based Trading**: Declarative swaps with guaranteed outcomes
+- **Gas Optimization**: Reduced transaction costs through batching
+
+### 🛠️ Technical Implementation:
+- **Quote API**: `/api/1inch/quote` - Get best cross-chain rates
+- **Intent Creation**: `/api/1inch/create-intent` - Create Fusion+ maker intents  
+- **Status Monitoring**: `/api/1inch/monitor` - Track swap execution
+- **Service Layer**: `src/lib/oneinch-fusion.ts` - Core integration logic
+
+### 🌐 Supported Networks (Testnet):
+- **Ethereum Sepolia** - Chain ID: 11155111
+- **Polygon Amoy** - Chain ID: 80002  
+- **Base Sepolia** - Chain ID: 84532
+- **Arbitrum Sepolia** - Chain ID: 421614
+- **Optimism Sepolia** - Chain ID: 11155420
+
+### 💰 Supported Test Tokens:
+- **USDC**: Available on all chains
+- **USDT**: Multi-chain stablecoin support
+- **ETH/MATIC/ARB**: Native gas tokens
+- **WETH**: Wrapped Ethereum on all chains
+
+### 🎯 Demo Flow:
+1. **Connect Wallet** → MetaMask with testnet configuration
+2. **Select Chains** → Choose source and destination networks  
+3. **Get Quote** → Fetch optimal cross-chain rates
+4. **Create Intent** → Submit signed intent to 1inch Fusion+
+5. **Monitor Execution** → Track resolver matching and settlement
+
+### 📱 Integration Points:
+- **CheckoutModal**: Enhanced with multi-step cross-chain workflow
+- **Demo Page**: `/1inch-demo` - Interactive testnet demo
+- **Payment Flow**: Integrated throughout creator marketplace
+
+### 🔗 Integration Roadmap
+
+Additional integrations planned:
 
 ### Polygon x402 Integration  
 ```typescript
 // TODO: integrate Polygon x402 for on-chain raffle verification
 // In /raffle page - for transparent winner selection
-```
-
-### Filecoin/IPFS Storage
-```typescript
-// TODO: integrate Filecoin/IPFS storage here  
-// In FileUploader.tsx - for decentralized content storage
 ```
 
 ### The Graph Protocol
@@ -328,12 +424,33 @@ git commit -m "feat: add comprehensive tests and documentation"
 
 ## 📚 Learn More
 
+### Core Technologies
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Tailwind CSS](https://tailwindcss.com)
 - [TypeScript](https://www.typescriptlang.org/)
-- [1inch Fusion+](https://1inch.io/fusion/)
+
+### 1inch Fusion+ Integration  
+- [1inch Fusion+ API](https://portal.1inch.dev/documentation/apis/swap/fusion-plus/introduction)
+- [Fusion+ Specification](https://1inch.io/assets/1inch-fusion-plus.pdf)
+- [1inch Developer Portal](https://portal.1inch.dev/)
+- [Fusion+ SDK](https://docs.1inch.io/docs/fusion-swap/introduction)
+
+### Filecoin & IPFS
+- [Lighthouse Storage](https://lighthouse.storage/) 
+- [Filecoin Documentation](https://docs.filecoin.io/)
+- [IPFS Documentation](https://docs.ipfs.tech/)
+- [Lighthouse SDK](https://docs.lighthouse.storage/)
+
+### Blockchain Networks
 - [Polygon](https://polygon.technology/)
+- [Base Network](https://base.org/)
+- [Arbitrum](https://arbitrum.io/)
+- [Optimism](https://optimism.io/)
+
+### Additional Integrations
 - [The Graph](https://thegraph.com/)
+- [Pyth Network](https://pyth.network/)
+- [Akave Storage](https://akave.ai/)
 
 ## 🤝 Contributing
 
