@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MagnifyingGlassIcon, PlayIcon, SparklesIcon, RocketLaunchIcon, ShieldCheckIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { MagnifyingGlassIcon, PlayIcon, SparklesIcon, RocketLaunchIcon, ShieldCheckIcon, CurrencyDollarIcon, CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import { Creator, Product } from '@/lib/types';
 import { MockDataStore } from '@/lib/mockData';
 import { CreatorCard } from '@/components/CreatorCard';
@@ -226,6 +227,122 @@ export default function HomePage() {
                 99.9%
               </div>
               <p className="text-gray-300">Uptime</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Filecoin Integration Showcase */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Powered by 
+              <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"> Filecoin</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Experience truly decentralized content storage with Filecoin's IPFS network. 
+              Upload, store, and share your digital assets permanently.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Features */}
+            <div className="space-y-8">
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <CloudArrowUpIcon className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Real IPFS Uploads</h3>
+                  <p className="text-gray-600">
+                    Files uploaded through POLYVERSE are stored permanently on the InterPlanetary File System, 
+                    accessible globally via content-addressed storage.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <ShieldCheckIcon className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Wallet-Based Security</h3>
+                  <p className="text-gray-600">
+                    Connect your MetaMask wallet to securely sign uploads and manage access control. 
+                    No private keys required - your security stays in your hands.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <RocketLaunchIcon className="w-6 h-6 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Deal Monitoring</h3>
+                  <p className="text-gray-600">
+                    Track your content's storage deals on the Filecoin network in real-time. 
+                    View proof-of-storage and replication status across storage providers.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <Link href="/store" className="btn-primary inline-flex items-center space-x-2">
+                  <span>Explore Filecoin Store</span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: Visual */}
+            <div className="relative">
+              <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-8 text-white">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-semibold text-lg">Upload to Filecoin</h4>
+                      <p className="text-emerald-100 text-sm">Permanent decentralized storage</p>
+                    </div>
+                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="bg-white bg-opacity-10 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm">my-digital-art.jpg</span>
+                        <span className="text-xs bg-green-500 px-2 py-1 rounded">✓ Stored</span>
+                      </div>
+                      <div className="text-xs text-emerald-200 font-mono">
+                        bafybeie...3r5q7m
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white bg-opacity-10 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm">course-materials.pdf</span>
+                        <span className="text-xs bg-yellow-500 px-2 py-1 rounded">⏳ Processing</span>
+                      </div>
+                      <div className="text-xs text-emerald-200 font-mono">
+                        bafybeia...8k2n1x
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-2">
+                    <div className="text-xs text-emerald-200">
+                      🌐 Globally distributed • 🔒 Cryptographically secured • ♾️ Permanently stored
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

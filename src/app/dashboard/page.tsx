@@ -7,6 +7,16 @@ import { MockDataStore } from '@/lib/mockData';
 import { formatCurrency, formatNumber, calculateMRR, getActiveSubscribers, getTotalEarnings } from '@/lib/utils';
 import { SmallLineChart } from '@/components/SmallLineChart';
 import { FileUploader } from '@/components/FileUploader';
+import { useWallet } from '@/lib/wallet';
+
+interface UploadedFile {
+  cid: string
+  name: string
+  size: string
+  uploadedAt: number
+  price: string
+  description: string
+}
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats>({
@@ -18,6 +28,15 @@ export default function DashboardPage() {
   const [creators, setCreators] = useState<Creator[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showUploadForm, setShowUploadForm] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [uploadFormData, setUploadFormData] = useState({
+    price: '',
+    description: '',
+    name: ''
+  });
+  
+  // Get wallet context
+  const { isConnected, address } = useWallet();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,6 +69,29 @@ export default function DashboardPage() {
 
     fetchData();
   }, []);
+
+  const handleFileUpload = (result: { cid: string; size: string; name: string }) => {
+    if (!isConnected || !address) {
+      alert('Please connect your wallet first')
+      return
+    }
+
+    const uploadedFile: UploadedFile = {
+      ...result,
+      uploadedAt: Date.now(),
+      price: uploadFormData.price,
+      description: uploadFormData.description
+    }
+
+    setUploadedFiles(prev => [...prev, uploadedFile])
+    
+    // Reset form
+    setUploadFormData({ price: '', description: '', name: '' })
+    setShowUploadForm(false)
+    
+    console.log('File uploaded to Filecoin:', uploadedFile)
+    // TODO: Save to creator's inventory with CID
+  }
 
   // Mock data for charts
   const mrrData = [2100, 2300, 2150, 2400, 2600, 2800, stats.mrr];
@@ -192,32 +234,28 @@ export default function DashboardPage() {
                     type="text"
                     placeholder="Product title"
                     className="input-field"
+                    value={uploadFormData.name}
+                    onChange={(e) => setUploadFormData(prev => ({ ...prev, name: e.target.value }))}
                   />
                   <textarea
                     placeholder="Product description"
                     rows={3}
                     className="input-field resize-none"
+                    value={uploadFormData.description}
+                    onChange={(e) => setUploadFormData(prev => ({ ...prev, description: e.target.value }))}
                   />
-                  <select className="input-field">
-                    <option value="">Select type</option>
-                    <option value="course">Course</option>
-                    <option value="ebook">eBook</option>
-                    <option value="digital_art">Digital Art</option>
-                    <option value="program">Program</option>
-                  </select>
                   <input
                     type="number"
                     placeholder="Price in USD"
                     className="input-field"
                     min="0"
                     step="0.01"
+                    value={uploadFormData.price}
+                    onChange={(e) => setUploadFormData(prev => ({ ...prev, price: e.target.value }))}
                   />
                   
                   <FileUploader
-                    onUpload={(result) => {
-                      console.log('File uploaded to Filecoin:', result)
-                      // TODO: Save to creator's inventory with CID
-                    }}
+                    onUpload={handleFileUpload}
                   />
                   
                   <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-4">
@@ -268,6 +306,54 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* Uploaded Files Section */}
+        {uploadedFiles.length > 0 && (
+          <div className="mt-8">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+              <div className="px-6 py-4 border-b border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900">Your Filecoin Content</h3>
+                <p className="text-sm text-gray-600 mt-1">Files uploaded to decentralized storage</p>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {uploadedFiles.map((file) => (
+                  <div key={file.cid} className="p-6 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-2 h-2 bg-green-500 rounded-full" />
+                          <h4 className="font-medium text-gray-900">{file.name}</h4>
+                          <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded">
+                            ${file.price}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">{file.description}</p>
+                        <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                          <span>Size: {(parseInt(file.size) / 1024).toFixed(1)} KB</span>
+                          <span>Uploaded: {new Date(file.uploadedAt).toLocaleDateString()}</span>
+                          <span>Wallet: {address?.substring(0, 6)}...{address?.substring(-4)}</span>
+                        </div>
+                        <div className="mt-2">
+                          <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">
+                            CID: {file.cid}
+                          </code>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2 ml-4">
+                        <button className="text-emerald-600 hover:text-emerald-700 text-sm">
+                          Share
+                        </button>
+                        <button className="text-blue-600 hover:text-blue-700 text-sm">
+                          View
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

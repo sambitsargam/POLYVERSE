@@ -37,6 +37,9 @@ export const Navbar = () => {
             <Link href="/" className="text-gray-700 hover:text-primary transition-colors">
               Marketplace
             </Link>
+            <Link href="/store" className="text-gray-700 hover:text-primary transition-colors">
+              Filecoin Store
+            </Link>
             <Link href="/dashboard" className="text-gray-700 hover:text-primary transition-colors">
               Dashboard
             </Link>
@@ -44,7 +47,7 @@ export const Navbar = () => {
               Raffle
             </Link>
             <Link href="/filecoin-demo" className="text-gray-700 hover:text-primary transition-colors">
-              Filecoin Demo
+              Demo
             </Link>
           </div>
 
@@ -91,6 +94,13 @@ export const Navbar = () => {
               Marketplace
             </Link>
             <Link
+              href="/store"
+              className="block text-gray-700 hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Filecoin Store
+            </Link>
+            <Link
               href="/dashboard"
               className="block text-gray-700 hover:text-primary transition-colors"
               onClick={() => setIsMenuOpen(false)}
@@ -109,7 +119,7 @@ export const Navbar = () => {
               className="block text-gray-700 hover:text-primary transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              Filecoin Demo
+              Demo
             </Link>
             <div className="pt-4 border-t border-gray-100">
               <label className="flex items-center space-x-2 text-sm mb-4">
