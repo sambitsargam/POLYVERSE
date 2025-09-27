@@ -213,7 +213,25 @@ export default function DashboardPage() {
                     step="0.01"
                   />
                   
-                  <FileUploader />
+                  <FileUploader
+                    onUpload={(result) => {
+                      console.log('File uploaded to Filecoin:', result)
+                      // TODO: Save to creator's inventory with CID
+                    }}
+                  />
+                  
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center mb-2">
+                      <svg className="w-5 h-5 text-emerald-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      <span className="text-sm font-medium text-emerald-800">Powered by Filecoin</span>
+                    </div>
+                    <p className="text-xs text-emerald-700">
+                      Your content will be stored on Filecoin's decentralized network with automatic 
+                      encryption and token-gated access control.
+                    </p>
+                  </div>
                   
                   <div className="flex space-x-3">
                     <button

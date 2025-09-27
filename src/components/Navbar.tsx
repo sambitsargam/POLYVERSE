@@ -43,6 +43,9 @@ export const Navbar = () => {
             <Link href="/raffle" className="text-gray-700 hover:text-primary transition-colors">
               Raffle
             </Link>
+            <Link href="/filecoin-demo" className="text-gray-700 hover:text-primary transition-colors">
+              Filecoin Demo
+            </Link>
           </div>
 
           {/* Right side */}
@@ -100,6 +103,13 @@ export const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Raffle
+            </Link>
+            <Link
+              href="/filecoin-demo"
+              className="block text-gray-700 hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Filecoin Demo
             </Link>
             <div className="pt-4 border-t border-gray-100">
               <label className="flex items-center space-x-2 text-sm mb-4">

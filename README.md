@@ -1,6 +1,98 @@
-# POLYVERSE — Creator Storefront
+# POLYVERSE — Creator Storefront 🚀
 
-A decentralized creator economy platform built with Next.js, TypeScript, and Tailwind CSS. This is a mock-only MVP that demonstrates blockchain-integrated creator storefronts without requiring real blockchain connections.
+A decentralized creator economy platform built with Next.js, TypeScript, and Tailwind CSS, featuring **Filecoin storage integration** for secure, decentralized digital goods.
+
+## ✨ Features
+
+- **Creator Marketplace**: Discover and support creators with tiered subscriptions
+- **Dashboard Analytics**: Real-time earnings, subscriber metrics, and growth insights  
+- **Token-Gated Content**: Secure digital goods with blockchain-based access control
+- **Filecoin Integration**: Decentralized storage via Lighthouse SDK with encryption support
+- **1inch Integration**: Seamless crypto payments with optimal swap rates
+- **Raffle System**: Engage communities with token-based raffles
+- **Responsive Design**: Mobile-first approach with modern UI/UX
+
+## 🗄️ Filecoin Storage Integration
+
+POLYVERSE integrates with Filecoin's decentralized storage network to provide secure, censorship-resistant storage for creator content.
+
+### Key Features:
+- **Lighthouse SDK Integration**: Upload files directly to Filecoin with deal tracking
+- **Automatic Encryption**: Client-side encryption for premium content
+- **Token Gating**: ERC-721 NFT-based access control
+- **Deal Monitoring**: Real-time Filecoin deal status and PoDSI proofs
+- **IPFS Gateway**: Fast content delivery via IPFS network
+
+### Demo Features:
+- 📤 **Upload Flow**: Drag & drop files to Filecoin storage
+- 🔐 **Access Control**: Mint access tokens after payment
+- 📊 **Deal Tracking**: Monitor storage deals and network status
+- 💰 **Payment Integration**: Simulate 1inch payments for gated content
+
+## 🚀 Quick Start
+
+### 1. Clone & Install
+```bash
+git clone https://github.com/sambitsargam/POLYVERSE.git
+cd POLYVERSE
+npm install
+```
+
+### 2. Environment Setup
+Copy `.env.example` to `.env.local` and configure:
+
+```bash
+# Lighthouse API Configuration
+LIGHTHOUSE_API_KEY=your_lighthouse_api_key_here
+LIGHTHOUSE_GATEWAY_URL=https://gateway.lighthouse.storage/ipfs/
+
+# Filecoin Network
+FILECOIN_RPC=https://api.calibration.node.glif.io/rpc/v1
+NETWORK=calibration
+
+# Storage Configuration
+NEXT_PUBLIC_GATEWAY_URL=https://gateway.lighthouse.storage/ipfs/
+```
+
+### 3. Get Lighthouse API Key
+1. Visit [files.lighthouse.storage](https://files.lighthouse.storage/)
+2. Create an account and generate an API key
+3. Add the key to your `.env.local` file
+
+### 4. Setup MetaMask Wallet
+1. Install MetaMask browser extension
+2. Add Filecoin Calibration testnet:
+   - Network name: Filecoin Calibration
+   - RPC URL: https://api.calibration.node.glif.io/rpc/v1
+   - Chain ID: 314159
+   - Currency: tFIL
+3. Get testnet FIL from [calibration faucet](https://faucet.calibration.fildev.network/)
+
+### 4. Run Development Server
+```bash
+npm run dev
+# Open http://localhost:3000
+```
+
+## 🔧 Filecoin Setup Guide
+
+### ✅ **Production Ready (Real Filecoin)**
+The project now uses **real Filecoin storage integration** by default. Visit `/filecoin-demo` to test:
+- **Real file uploads** to IPFS via Lighthouse SDK
+- **Wallet-based authentication** with MetaMask
+- **Live deal status tracking** on Filecoin network
+- **Token-gated access control** for uploaded content
+
+### Current Configuration:
+1. ✅ **Lighthouse SDK**: Integrated for real IPFS uploads
+2. ✅ **Wallet Authentication**: MetaMask integration (no private keys)
+3. ✅ **Environment Variables**: API key configured for production use
+4. ✅ **Real Network**: Connected to Filecoin Calibration testnet
+
+### Required Setup:
+- Filecoin Calibration testnet FIL tokens ([Get from faucet](https://faucet.calibration.fildev.network/))
+- MetaMask configured for Filecoin network
+- Lighthouse API key (already configured)
 
 ## 🚀 Quick Start
 
@@ -45,9 +137,36 @@ Visit [http://localhost:3000](http://localhost:3000) to see the app.
 - **CheckoutModal**: Multi-token payment simulation (USDC, MATIC, ETH)
 - **Toast**: Success/error notifications
 - **SmallLineChart**: SVG-based mini charts for dashboard stats
-- **FileUploader**: Drag-and-drop file upload simulation
+- **FileUploader**: Real drag-and-drop file upload to Filecoin via Lighthouse SDK
 
-## 💰 Mock Payment System
+## � Filecoin Storage Demo
+
+Visit `/filecoin-demo` to experience:
+
+1. **Connect MetaMask Wallet**: 
+   - Connect your MetaMask wallet to Filecoin Calibration testnet
+   - View wallet balance and connection status
+   - No private keys required - uses secure wallet signing
+
+2. **Upload Files to Filecoin**:
+   - Drag and drop files for upload
+   - Files are encrypted and stored via Lighthouse SDK
+   - Real-time upload progress and deal status
+   - Generates downloadable access tokens
+
+3. **Token-Gated Access**:
+   - Download files using access tokens
+   - Secure access control system
+   - View all your access tokens and permissions
+
+4. **Filecoin Integration Features**:
+   - Real Filecoin Calibration testnet storage
+   - Encrypted uploads via Lighthouse
+   - Deal status monitoring
+   - Access token generation
+   - Wallet-based authentication (no private keys!)
+
+## �💰 Mock Payment System
 
 ### How to Simulate Purchases
 

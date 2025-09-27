@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CheckoutModal } from '@/components/CheckoutModal';
 import { showToast } from '@/components/Toast';
