@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { useAccount } from 'wagmi'
 import { contractService } from '@/lib/contract-service'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { useUser } from '@/contexts/UserContext'
 
 export default function RegisterPage() {
   const { address, isConnected } = useAccount()
+  const { profile, setProfile, isRegistered } = useUser()
   const [formData, setFormData] = useState({
     handle: '',
     name: '',
@@ -17,6 +19,44 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+
+  // If user is already registered, show different content
+  if (isRegistered && profile) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Already Registered!</h2>
+            <p className="text-gray-600 mb-4">
+              Welcome back, <strong>{profile.name}</strong> (@{profile.handle})
+            </p>
+            <p className="text-sm text-gray-500 mb-6">
+              You're all set up as a creator on POLYVERSE. Start creating amazing content!
+            </p>
+            <div className="space-y-3">
+              <a
+                href="/create"
+                className="w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors inline-block"
+              >
+                Create Content
+              </a>
+              <a
+                href="/dashboard"
+                className="w-full border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors inline-block"
+              >
+                Go to Dashboard
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,6 +79,18 @@ export default function RegisterPage() {
       const receipt = await contractService.registerCreator(formData.handle, formData.name)
       console.log('Registration successful:', receipt)
       
+      // Save profile to context and localStorage
+      const userProfile = {
+        handle: formData.handle,
+        name: formData.name,
+        bio: formData.bio,
+        avatar: formData.avatar,
+        coverImage: formData.coverImage,
+        isRegistered: true,
+        walletAddress: address!
+      }
+      
+      setProfile(userProfile)
       setSuccess(true)
       setFormData({ handle: '', name: '', bio: '', avatar: '', coverImage: '' })
     } catch (error) {

@@ -6,9 +6,7 @@ import {
   optimism, 
   polygon,
   sepolia,
-  polygonMumbai,
-  filecoin,
-  filecoinCalibration
+  polygonMumbai
 } from 'wagmi/chains';
 
 // Custom Filecoin chains (if not available in wagmi/chains)
@@ -57,7 +55,7 @@ const filecoinCalibrationTestnet = {
 
 export const config = getDefaultConfig({
   appName: 'Polyverse Creator Storefront',
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'your-project-id',
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'fcd3420b61e039382c67c578b42abe70',
   chains: [
     filecoinCalibrationTestnet,
     filecoinMainnet,
@@ -69,5 +67,7 @@ export const config = getDefaultConfig({
     sepolia,
     polygonMumbai
   ],
-  ssr: true, // If your dApp uses server side rendering (SSR)
+  ssr: true,
+  storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+  multiInjectedProviderDiscovery: true,
 });

@@ -23,10 +23,10 @@ export const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <Link href="/" className="text-gray-700 hover:text-primary transition-colors">
-              Marketplace
+              Home
             </Link>
-            <Link href="/store" className="text-gray-700 hover:text-primary transition-colors">
-              Filecoin Store
+            <Link href="/marketplace" className="text-gray-700 hover:text-primary transition-colors">
+              Marketplace
             </Link>
             <Link href="/register" className="text-gray-700 hover:text-primary transition-colors">
               Become Creator
@@ -41,7 +41,14 @@ export const Navbar = () => {
 
           {/* Right side */}
           <div className="hidden md:flex items-center space-x-4">
-            <ConnectButton />
+            <ConnectButton 
+              chainStatus="none"
+              showBalance={false}
+              accountStatus={{
+                smallScreen: 'avatar',
+                largeScreen: 'full',
+              }}
+            />
           </div>
 
           {/* Mobile menu button */}
@@ -65,14 +72,14 @@ export const Navbar = () => {
               className="block text-gray-700 hover:text-primary transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              Marketplace
+              Home
             </Link>
             <Link
-              href="/store"
+              href="/marketplace"
               className="block text-gray-700 hover:text-primary transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              Filecoin Store
+              Marketplace
             </Link>
             <Link
               href="/register"
@@ -97,7 +104,14 @@ export const Navbar = () => {
             </Link>
             <div className="pt-4 border-t border-gray-100">
               <div className="flex justify-center">
-                <ConnectButton />
+                <ConnectButton 
+                  chainStatus="none"
+                  showBalance={false}
+                  accountStatus={{
+                    smallScreen: 'avatar',
+                    largeScreen: 'address',
+                  }}
+                />
               </div>
             </div>
           </div>

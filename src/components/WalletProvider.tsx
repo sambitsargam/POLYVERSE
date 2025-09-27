@@ -8,7 +8,15 @@ import { config } from '@/lib/wallet-config';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
-const queryClient = new QueryClient();
+// Create a stable query client instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000, // 1 minute
+      retry: 3,
+    },
+  },
+});
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   return (
@@ -21,6 +29,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
             borderRadius: 'medium',
           })}
           showRecentTransactions={true}
+          modalSize="compact"
+          initialChain={config.chains[0]}
         >
           {children}
         </RainbowKitProvider>
