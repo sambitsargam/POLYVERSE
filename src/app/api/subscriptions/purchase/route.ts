@@ -1,12 +1,47 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SUBSCRIPTION_PLANS, x402SubscriptionService } from '@/lib/x402-subscription-service';
+import { SUBSCRIPTION_PLANS } from '@/lib/subscription-plans';
+import { parseUnits } from 'viem';
 
-// x402 Facilitator Configuration for Polygon Amoy
+// x402 Facilitator Configuration for Polygon Amoy (Official)
 const X402_FACILITATOR_CONFIG = {
-  url: process.env.X402_FACILITATOR_URL || 'https://x402.org/facilitator',
-  // In production, you'd use a real facilitator like from the demo repository
-  amoyDemoUrl: 'http://localhost:5401', // From the x402 Polygon Amoy demo
+  url: process.env.X402_FACILITATOR_URL || 'https://x402.polygon.technology',
+  // Official Polygon Amoy facilitator - handles all gas fees and settlement
 };
+
+// x402 Configuration
+const X402_CONFIG = {
+  USDC_AMOY: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582', // USDC on Polygon Amoy testnet
+  RECIPIENT_ADDRESS: process.env.NEXT_PUBLIC_RECIPIENT_ADDRESS || '0x90D9CD66FAdFF1C2Ba32C99A47C76532d08A704B',
+};
+
+/**
+ * Create x402 payment requirements following the official specification
+ */
+function createPaymentRequirements(plan: any) {
+  const network = plan.network === 'polygon' ? 'polygon' : 'polygon-amoy';
+  const usdcAddress = X402_CONFIG.USDC_AMOY;
+  
+  // Convert USD to USDC atomic units (6 decimals for USDC)
+  const amountUsdc = parseUnits(plan.price.toString(), 6);
+
+  return {
+    scheme: 'exact' as const,
+    network,
+    maxAmountRequired: amountUsdc.toString(),
+    asset: usdcAddress,
+    payTo: X402_CONFIG.RECIPIENT_ADDRESS,
+    resource: `/api/subscriptions/activate/${plan.id}`,
+    description: `Subscription: ${plan.name} - ${plan.description}`,
+    mimeType: 'application/json',
+    maxTimeoutSeconds: 300, // 5 minutes
+    extra: {
+      name: 'USDC',
+      version: '2',
+      subscriptionPlan: plan.id,
+      duration: plan.duration,
+    }
+  };
+}
 
 /**
  * x402 Subscription Purchase Endpoint
@@ -14,21 +49,30 @@ const X402_FACILITATOR_CONFIG = {
  */
 export async function POST(req: NextRequest) {
   try {
+    console.log('x402 API: Processing subscription purchase request...');
+    console.log('x402 Facilitator URL:', X402_FACILITATOR_CONFIG.url);
+    
     const body = await req.json();
     const { planId, paymentRequirements } = body;
+
+    console.log('x402 API: Request data:', { planId, hasPaymentRequirements: !!paymentRequirements });
 
     // Find the subscription plan
     const plan = SUBSCRIPTION_PLANS.find((p: any) => p.id === planId);
     if (!plan) {
+      console.log('x402 API: Invalid plan ID:', planId);
       return NextResponse.json({ error: 'Invalid subscription plan' }, { status: 400 });
     }
 
+    console.log('x402 API: Found plan:', plan.name);
+
     // Check for X-PAYMENT header (x402 standard)
     const paymentHeader = req.headers.get('X-PAYMENT');
+    console.log('x402 API: Payment header present:', !!paymentHeader);
     
     if (!paymentHeader) {
       // Return 402 Payment Required with x402-compliant payment requirements
-      const requirements = paymentRequirements || x402SubscriptionService.createPaymentRequirements(plan);
+      const requirements = paymentRequirements || createPaymentRequirements(plan);
       
       console.log('x402 Payment Required (Polygon Amoy):', requirements);
       
@@ -117,27 +161,40 @@ export async function POST(req: NextRequest) {
  */
 async function verifyPaymentWithFacilitator(paymentHeader: string, paymentRequirements: any) {
   try {
-    // TODO: Implement real facilitator verification call
-    // const response = await fetch(`${X402_FACILITATOR_CONFIG.url}/verify`, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     x402Version: 1,
-    //     paymentPayload: paymentHeader, // base64 encoded payload
-    //     paymentRequirements,
-    //   }),
-    // });
+    console.log('Calling REAL x402 facilitator for verification...');
+    console.log('Facilitator URL:', X402_FACILITATOR_CONFIG.url);
     
-    // For demo, simulate successful verification
-    console.log('Verifying x402 payment with facilitator (Polygon Amoy)...');
+    const response = await fetch(`${X402_FACILITATOR_CONFIG.url}/verify`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        x402Version: 1,
+        paymentPayload: paymentHeader, // base64 encoded payload
+        paymentRequirements,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('Facilitator verification failed:', response.status, response.statusText);
+      const errorText = await response.text();
+      console.error('Error details:', errorText);
+      return { isValid: false, error: `Facilitator returned ${response.status}` };
+    }
+
+    const result = await response.json();
+    console.log('Facilitator verification result:', result);
     
     return {
-      isValid: true,
-      payer: '0xDemoPayerAddress',
+      isValid: result.valid === true,
+      payer: result.payer || result.from,
+      error: result.error
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Facilitator verification error:', error);
-    return { isValid: false };
+    return { isValid: false, error: error?.message || 'Unknown error' };
   }
 }
 
@@ -147,30 +204,40 @@ async function verifyPaymentWithFacilitator(paymentHeader: string, paymentRequir
  */
 async function settlePaymentWithFacilitator(paymentHeader: string, paymentRequirements: any) {
   try {
-    // TODO: Implement real facilitator settlement call
-    // const response = await fetch(`${X402_FACILITATOR_CONFIG.url}/settle`, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     x402Version: 1,
-    //     paymentPayload: paymentHeader,
-    //     paymentRequirements,
-    //   }),
-    // });
+    console.log('Calling REAL x402 facilitator for settlement...');
     
-    // For demo, simulate successful settlement
-    console.log('Settling x402 payment with facilitator (Polygon Amoy)...');
-    
-    // Generate mock transaction hash that looks like Polygon Amoy
-    const mockTxHash = `0x${Math.random().toString(16).substring(2, 66)}`;
+    const response = await fetch(`${X402_FACILITATOR_CONFIG.url}/settle`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        x402Version: 1,
+        paymentPayload: paymentHeader,
+        paymentRequirements,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('Facilitator settlement failed:', response.status, response.statusText);
+      const errorText = await response.text();
+      console.error('Settlement error details:', errorText);
+      return { success: false, error: `Settlement failed: ${response.status}` };
+    }
+
+    const result = await response.json();
+    console.log('Facilitator settlement result:', result);
     
     return {
       success: true,
-      txHash: mockTxHash,
-      payer: '0xDemoPayerAddress',
+      txHash: result.transactionHash || result.txHash || result.transaction,
+      payer: result.payer || result.from,
+      blockNumber: result.blockNumber,
+      network: 'polygon-amoy'
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Facilitator settlement error:', error);
-    return { success: false };
+    return { success: false, error: error?.message || 'Settlement failed' };
   }
 }

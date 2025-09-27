@@ -33,38 +33,65 @@ export default function RootLayout({
         {/* Suppress Coinbase Wallet analytics errors */}
         <Script id="error-suppression" strategy="beforeInteractive">
           {`
-            // Suppress console errors for Coinbase analytics endpoints
+            // More aggressive Coinbase analytics suppression
             const originalConsoleError = console.error;
             console.error = (...args) => {
               const message = args.join(' ');
               
-              // Suppress Coinbase analytics/telemetry errors
+              // Suppress all Coinbase analytics/telemetry errors
               if (
-                message.includes('cca-lite.coinbase.com/metrics') ||
-                message.includes('net::ERR_ABORTED 502') ||
-                message.includes('net::ERR_ABORTED 401') ||
+                message.includes('cca-lite.coinbase.com') ||
+                message.includes('metrics') ||
                 message.includes('analyticsTracker') ||
-                message.includes('initCCA')
+                message.includes('initCCA') ||
+                message.includes('401 (Unauthorized)') ||
+                message.includes('net::ERR_ABORTED')
               ) {
-                return; // Suppress these non-critical errors
+                return; // Suppress these errors completely
               }
               
               originalConsoleError.apply(console, args);
             };
 
-            // Suppress unhandled promise rejections for analytics
+            // Suppress all promise rejections related to analytics
             window.addEventListener('unhandledrejection', (event) => {
               const reason = event.reason;
+              const message = reason?.message || reason || '';
               
               if (
-                reason?.message?.includes('cca-lite.coinbase.com') ||
-                reason?.message?.includes('analytics') ||
-                reason?.message?.includes('telemetry')
+                message.includes('cca-lite.coinbase.com') ||
+                message.includes('analytics') ||
+                message.includes('telemetry') ||
+                message.includes('metrics') ||
+                message.includes('401') ||
+                message.includes('ERR_ABORTED')
               ) {
                 event.preventDefault();
                 return;
               }
             });
+
+            // Override fetch to suppress analytics requests silently
+            const originalFetch = window.fetch;
+            window.fetch = (...args) => {
+              const url = args[0];
+              
+              // Suppress Coinbase analytics requests completely
+              if (typeof url === 'string' && url.includes('cca-lite.coinbase.com')) {
+                return Promise.resolve(new Response('{}', { status: 200 }));
+              }
+              
+              // Debug API calls for our application
+              if (typeof url === 'string' && url.includes('/api/subscriptions/purchase')) {
+                console.log('API Call Debug:', {
+                  url: url,
+                  fullUrl: new URL(url, window.location.origin).href,
+                  origin: window.location.origin
+                });
+              }
+              
+              return originalFetch.apply(window, args);
+            };
           `}
         </Script>
         

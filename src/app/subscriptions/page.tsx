@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useAccount, useWalletClient } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { CheckIcon, ClockIcon, StarIcon } from '@heroicons/react/24/solid';
-import { x402SubscriptionService, SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/lib/x402-subscription-service';
+import { x402SubscriptionService } from '@/lib/x402-subscription-service';
+import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/lib/subscription-plans';
 import { showToast } from '@/components/Toast';
 
 interface ActiveSubscription {
@@ -24,13 +25,21 @@ export default function SubscriptionsPage() {
   const [activeSubscriptions, setActiveSubscriptions] = useState<ActiveSubscription[]>([]);
   const [initialized, setInitialized] = useState(false);
 
-  // Initialize x402 service with wallet
+  // Initialize x402 service with wallet (improved)
   useEffect(() => {
-    if (walletClient && !initialized) {
+    console.log('Wallet initialization check:', {
+      walletClient: !!walletClient,
+      isConnected,
+      initialized,
+      address
+    });
+
+    if (walletClient && isConnected && address && !initialized) {
+      console.log('Initializing x402 service with wallet...');
       x402SubscriptionService.initializeClientWallet(walletClient);
       setInitialized(true);
     }
-  }, [walletClient, initialized]);
+  }, [walletClient, isConnected, address, initialized]);
 
   // Load active subscriptions
   useEffect(() => {
@@ -40,8 +49,27 @@ export default function SubscriptionsPage() {
   }, [isConnected]);
 
   const handleSubscribe = async (plan: SubscriptionPlan) => {
-    if (!isConnected || !walletClient) {
+    console.log('Wallet connection debug:', {
+      address,
+      isConnected,
+      walletClient: !!walletClient,
+      initialized
+    });
+
+    if (!isConnected) {
       showToast('Please connect your wallet first', 'error');
+      return;
+    }
+
+    if (!walletClient) {
+      // Try to reinitialize if wallet client is missing but user is connected
+      if (isConnected && address) {
+        showToast('Wallet client initializing... Please try again in a moment.', 'info');
+        // Force re-initialization
+        setTimeout(() => setInitialized(false), 1000);
+      } else {
+        showToast('Wallet client not ready. Please wait a moment and try again.', 'error');
+      }
       return;
     }
 
@@ -59,7 +87,7 @@ export default function SubscriptionsPage() {
     setLoading(plan.id);
     
     try {
-      showToast('Initiating subscription payment...', 'info');
+      showToast('Preparing x402 payment on Polygon Amoy...', 'info');
       
       const result = await x402SubscriptionService.purchaseSubscription(plan);
       
@@ -76,7 +104,17 @@ export default function SubscriptionsPage() {
       
     } catch (error: any) {
       console.error('Subscription error:', error);
-      showToast(error.message || 'Failed to process subscription', 'error');
+      
+      // Provide specific error messages for common issues
+      if (error.message?.includes('switch to Polygon Amoy')) {
+        showToast('Please switch to Polygon Amoy network in your wallet to continue', 'error');
+      } else if (error.message?.includes('Payment authorization failed')) {
+        showToast('Payment signing was cancelled or failed. Please try again.', 'error');
+      } else if (error.message?.includes('chain')) {
+        showToast('Network error. Please ensure you are connected to Polygon Amoy (Chain ID: 80002)', 'error');
+      } else {
+        showToast(error.message || 'Failed to process subscription', 'error');
+      }
     } finally {
       setLoading(null);
     }
@@ -145,7 +183,7 @@ export default function SubscriptionsPage() {
 
         <div className="mb-8">
           <ul className="space-y-3">
-            {plan.features.map((feature, index) => (
+            {plan.features.map((feature: string, index: number) => (
               <li key={index} className="flex items-center text-gray-700">
                 <CheckIcon className="w-5 h-5 text-green-500 mr-3" />
                 {feature}
@@ -213,6 +251,44 @@ export default function SubscriptionsPage() {
             Unlock exclusive content and features with our subscription plans. 
             Powered by x402 protocol on Polygon for instant, gasless payments.
           </p>
+        </div>
+
+        {/* Network Notice for x402 Subscriptions */}
+        <div className="mb-8 p-6 bg-amber-50 rounded-lg border border-amber-200">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0">
+              <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-amber-900 mb-2">⚡ Polygon Amoy Required</h3>
+              <p className="text-amber-800 mb-3">
+                <strong>x402 subscriptions require Polygon Amoy testnet.</strong> Your wallet will automatically 
+                switch networks when you purchase a subscription. Make sure you have testnet USDC from the Circle faucet.
+              </p>
+              <div className="text-sm text-amber-700 space-y-1">
+                <p>• <strong>Required Network:</strong> Polygon Amoy (Chain ID: 80002)</p>
+                <p>• <strong>Payment Token:</strong> USDC (6 decimals)</p>
+                <p>• <strong>Get Testnet USDC:</strong> <a href="https://faucet.circle.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-900">faucet.circle.com</a> → Select "Polygon PoS Amoy"</p>
+                <p>• <strong>Protocol:</strong> x402 micropayments with gasless transactions</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Wallet Connection Status */}
+        <div className="mb-8 p-4 bg-gray-100 rounded-lg">
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">Wallet Connection Status (Debug)</h3>
+          <div className="text-xs text-gray-600 space-y-1">
+            <p>Address: {address || 'Not connected'}</p>
+            <p>Is Connected: {isConnected ? '✅ Yes' : '❌ No'}</p>
+            <p>Wallet Client: {walletClient ? '✅ Ready' : '❌ Not ready'}</p>
+            <p>Initialized: {initialized ? '✅ Yes' : '❌ No'}</p>
+          </div>
+          <div className="mt-2">
+            <ConnectButton />
+          </div>
         </div>
 
         {/* x402 Protocol Information */}

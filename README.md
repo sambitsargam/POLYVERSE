@@ -1,33 +1,153 @@
-# POLYVERSE — Creator Storefront 🚀
+# POLYVERSE — Decentralized Creator Economy Platform 🚀
 
-A decentralized creator economy platform built with Next.js, TypeScript, and Tailwind CSS, featuring **Filecoin storage integration** for secure, decentralized digital goods.
+A comprehensive Web3 creator platform built with Next.js, TypeScript, and Tailwind CSS, featuring **x402 Protocol Subscriptions**, **Filecoin Lighthouse Storage**, and **KiraPay Payment Processing**.
 
-## ✨ Features
+## ✨ Key Features
 
-- **Creator Marketplace**: Discover and support creators with tiered subscriptions
-- **Dashboard Analytics**: Real-time earnings, subscriber metrics, and growth insights  
-- **Token-Gated Content**: Secure digital goods with blockchain-based access control
-- **Filecoin Integration**: Decentralized storage via Lighthouse SDK with encryption support
-- **KiraPay Integration**: Advanced crypto payment processing with multi-token support
-- **Raffle System**: Engage communities with token-based raffles
-- **Responsive Design**: Mobile-first approach with modern UI/UX
+### 🔐 **x402 Protocol Integration**
+- **Subscription-Based Payments**: EIP-3009 compliant USDC transfers on Polygon Amoy
+- **HTTP 402 Payment Required**: Industry-standard paywall protocol implementation
+- **Real Blockchain Transactions**: Actual on-chain settlements with transaction verification
+- **Auto Chain Switching**: Seamless Polygon Amoy network integration
 
-## 🗄️ Filecoin Storage Integration
+### 🌐 **Filecoin Lighthouse Storage**  
+- **Decentralized Storage**: Censorship-resistant content hosting on Filecoin network
+- **Client-Side Encryption**: Secure premium content with automatic encryption
+- **IPFS Gateway**: Fast global content delivery with redundancy
+- **Deal Monitoring**: Real-time Filecoin storage deal tracking and verification
 
-POLYVERSE integrates with Filecoin's decentralized storage network to provide secure, censorship-resistant storage for creator content.
+### 💳 **KiraPay Payment Processing**
+- **Multi-Token Support**: Accept payments in USDC, ETH, MATIC, and more
+- **Cross-Chain Compatibility**: Ethereum, Polygon, and Filecoin network support
+- **Payment Gateway**: Seamless crypto-to-creator payment flows
+- **Transaction Security**: Cryptographic payment verification and settlement
 
-### Key Features:
-- **Lighthouse SDK Integration**: Upload files directly to Filecoin with deal tracking
-- **Automatic Encryption**: Client-side encryption for premium content
-- **Token Gating**: ERC-721 NFT-based access control
-- **Deal Monitoring**: Real-time Filecoin deal status and PoDSI proofs
-- **IPFS Gateway**: Fast content delivery via IPFS network
+### 🎯 **Creator Tools**
+- **Subscription Management**: Tiered access plans with flexible pricing
+- **Analytics Dashboard**: Real-time earnings, subscriber metrics, and growth insights
+- **Token-Gated Content**: NFT and subscription-based access control
+- **Community Engagement**: Raffle systems and creator-fan interactions
 
-### Demo Features:
-- 📤 **Upload Flow**: Drag & drop files to Filecoin storage
-- 🔐 **Access Control**: Mint access tokens after payment
-- 📊 **Deal Tracking**: Monitor storage deals and network status
-- 💰 **Payment Integration**: KiraPay payment processing for gated content
+## 🏗️ Architecture Overview
+
+```mermaid
+graph TB
+    A[Frontend - Next.js] --> B[x402 Protocol Layer]
+    A --> C[Filecoin Lighthouse SDK]
+    A --> D[KiraPay Integration]
+    
+    B --> E[Polygon Amoy Network]
+    B --> F[USDC Smart Contract]
+    
+    C --> G[Filecoin Storage Network]
+    C --> H[IPFS Gateway]
+    
+    D --> I[Multi-Chain Payment Processing]
+    D --> J[Creator Revenue Settlement]
+    
+    E --> K[Real Transaction Hashes]
+    G --> L[Decentralized Content Storage]
+    I --> M[Cross-Chain Token Support]
+```
+
+## 💰 x402 Protocol Implementation
+
+POLYVERSE implements the x402 HTTP payment protocol for subscription-based content access using real blockchain transactions.
+
+### Protocol Features:
+- **HTTP 402 Responses**: Standard payment required status codes
+- **EIP-3009 Signatures**: TransferWithAuthorization for gasless USDC transfers  
+- **Facilitator Integration**: Official Polygon x402 facilitator (`https://x402.polygon.technology`)
+- **Real Settlement**: Actual blockchain transactions with verifiable transaction hashes
+
+### Subscription Flow:
+1. **Content Request**: User attempts to access premium content
+2. **402 Payment Required**: Server responds with payment requirements
+3. **Wallet Authorization**: User signs EIP-3009 TransferWithAuthorization
+4. **Facilitator Verification**: Payment validated via x402 facilitator network
+5. **Blockchain Settlement**: USDC transferred on Polygon Amoy with real TX hash
+6. **Content Access**: Subscription activated with on-chain proof
+
+### Example x402 Payment:
+```json
+{
+  "x402Version": 1,
+  "accepts": [{
+    "scheme": "exact",
+    "network": "polygon-amoy", 
+    "maxAmountRequired": "5000000", // $5.00 USDC
+    "asset": "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
+    "payTo": "0x90D9CD66FAdFF1C2Ba32C99A47C76532d08A704B",
+    "description": "Basic Weekly Subscription"
+  }]
+}
+```
+
+## 🗄️ Filecoin Lighthouse Storage
+
+Decentralized storage infrastructure providing censorship-resistant content hosting and distribution.
+
+### Storage Features:
+- **Lighthouse SDK**: Direct integration with Filecoin storage network
+- **Automatic Encryption**: Client-side content encryption for premium access
+- **Deal Tracking**: Monitor Filecoin storage deals and network health
+- **IPFS Distribution**: Global content delivery via IPFS gateway network
+- **Access Control**: Token-gated content with NFT verification
+
+### Upload Process:
+1. **Content Upload**: Files encrypted and uploaded to Lighthouse
+2. **Filecoin Deal**: Storage deal created on Filecoin network
+3. **IPFS Hash**: Content available via IPFS with unique hash
+4. **Access Token**: NFT or subscription token minted for gated access
+5. **Global Distribution**: Content replicated across IPFS network
+
+### Code Example:
+```typescript
+import lighthouse from '@lighthouse-web3/sdk';
+
+// Upload encrypted content
+const uploadResponse = await lighthouse.uploadEncrypted(
+  file,
+  process.env.LIGHTHOUSE_API_KEY,
+  publicKey,
+  signedMessage
+);
+
+// Content hash: QmXXXXXX...
+console.log('IPFS Hash:', uploadResponse.data.Hash);
+```
+
+## 💳 KiraPay Integration
+
+Multi-chain payment processing system enabling seamless crypto payments for creator subscriptions.
+
+### Payment Features:
+- **Multi-Token Support**: USDC, ETH, MATIC, FIL, and custom tokens
+- **Cross-Chain**: Ethereum mainnet, Polygon, and Filecoin network support  
+- **Payment Gateway**: Embedded checkout with wallet connection
+- **Revenue Settlement**: Automatic creator revenue distribution
+- **Transaction Security**: Cryptographic verification and fraud protection
+
+### Supported Networks:
+- **Ethereum Mainnet**: USDC, ETH, DAI payments
+- **Polygon**: Low-cost USDC transfers and x402 subscriptions
+- **Filecoin**: FIL token payments and storage deal funding
+
+### Integration Example:
+```typescript
+import { KiraPaySDK } from 'kirapay';
+
+const payment = await KiraPaySDK.createPayment({
+  amount: '5.00',
+  currency: 'USDC',
+  network: 'polygon',
+  recipient: creatorWallet,
+  metadata: {
+    subscriptionId: 'basic-weekly',
+    platform: 'polyverse'
+  }
+});
+```
 
 ## 🚀 Quick Start
 
@@ -42,12 +162,230 @@ npm install
 Copy `.env.example` to `.env.local` and configure:
 
 ```bash
-# Lighthouse API Configuration
+# x402 Protocol Configuration
+NEXT_PUBLIC_X402_FACILITATOR_URL=https://x402.polygon.technology
+NEXT_PUBLIC_RECIPIENT_ADDRESS=0x90D9CD66FAdFF1C2Ba32C99A47C76532d08A704B
+PRIVATE_KEY_AGENT=0xYourPrivateKeyForServerOperations
+
+# Polygon Amoy Network  
+NEXT_PUBLIC_AMOY_RPC=https://rpc-amoy.polygon.technology
+NEXT_PUBLIC_POLYGON_RPC=https://polygon-rpc.com
+
+# Filecoin Lighthouse Storage
 LIGHTHOUSE_API_KEY=your_lighthouse_api_key_here
 LIGHTHOUSE_GATEWAY_URL=https://gateway.lighthouse.storage/ipfs/
 
-# Filecoin Network
-FILECOIN_RPC=https://api.calibration.node.glif.io/rpc/v1
+# KiraPay Configuration
+KIRAPAY_API_KEY=your_kirapay_api_key
+KIRAPAY_SECRET=your_kirapay_secret
+KIRAPAY_WEBHOOK_URL=https://yourapp.com/api/webhooks/kirapay
+
+# Database (Optional - for subscription tracking)
+DATABASE_URL=postgresql://user:pass@localhost/polyverse
+```
+
+### 3. Network Configuration
+Ensure your wallet is connected to **Polygon Amoy Testnet**:
+- **Network Name**: Polygon Amoy
+- **RPC URL**: https://rpc-amoy.polygon.technology  
+- **Chain ID**: 80002
+- **Currency**: POL
+- **Block Explorer**: https://amoy.polygonscan.com
+
+### 4. Get Test Tokens
+```bash
+# Get Amoy POL from faucet
+curl -X POST https://faucet.polygon.technology/api/v1/amoy \
+  -H "Content-Type: application/json" \
+  -d '{"address":"YOUR_WALLET_ADDRESS"}'
+
+# Get Test USDC (for x402 payments)
+# Contract: 0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582
+```
+
+### 5. Start Development Server
+```bash
+npm run dev
+# Open http://localhost:3000
+```
+
+## 📋 API Documentation
+
+### x402 Subscription API
+
+#### POST `/api/subscriptions/purchase`
+Purchase subscription using x402 protocol
+
+**Without X-PAYMENT Header (Initial Request):**
+```bash
+curl -X POST http://localhost:3000/api/subscriptions/purchase \
+  -H "Content-Type: application/json" \
+  -d '{"planId":"basic-weekly"}'
+
+# Response: HTTP 402 Payment Required
+{
+  "x402Version": 1,
+  "error": "X-PAYMENT header is required",
+  "accepts": [{
+    "scheme": "exact",
+    "network": "polygon-amoy",
+    "maxAmountRequired": "5000000",
+    "asset": "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
+    "payTo": "0x90D9CD66FAdFF1C2Ba32C99A47C76532d08A704B",
+    "description": "Basic Weekly Subscription"
+  }]
+}
+```
+
+**With X-PAYMENT Header (Payment Authorization):**
+```bash
+curl -X POST http://localhost:3000/api/subscriptions/purchase \
+  -H "Content-Type: application/json" \
+  -H "X-PAYMENT: eyJzY2hlbWUiOiJleGFjdCIsIm5ldHdvcms..." \
+  -d '{"planId":"basic-weekly"}'
+
+# Response: HTTP 200 OK
+{
+  "success": true,
+  "txHash": "0xabc123...def456",
+  "subscriptionId": "sub_abc123",
+  "expiresAt": "2025-10-04T12:00:00Z"
+}
+```
+
+### Filecoin Storage API
+
+#### POST `/api/storage/upload`
+Upload content to Filecoin via Lighthouse
+
+```bash
+curl -X POST http://localhost:3000/api/storage/upload \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -F "file=@content.pdf" \
+  -F "encrypt=true"
+
+# Response
+{
+  "success": true,
+  "hash": "QmXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  "url": "https://gateway.lighthouse.storage/ipfs/QmXXX...",
+  "dealId": "123456",
+  "encrypted": true
+}
+```
+
+#### GET `/api/storage/deals`
+Check Filecoin deal status
+
+```bash
+curl http://localhost:3000/api/storage/deals?hash=QmXXX...
+
+# Response  
+{
+  "hash": "QmXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  "deals": [{
+    "dealId": "123456",
+    "miner": "f01234",
+    "status": "active",
+    "startEpoch": 2851234,
+    "endEpoch": 3851234
+  }]
+}
+```
+
+### KiraPay Payment API
+
+#### POST `/api/payments/create`
+Create payment link via KiraPay
+
+```bash
+curl -X POST http://localhost:3000/api/payments/create \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": "5.00",
+    "currency": "USDC", 
+    "network": "polygon",
+    "creatorWallet": "0xCreatorAddress",
+    "subscriptionPlan": "basic-weekly"
+  }'
+
+# Response
+{
+  "paymentId": "pay_abc123",
+  "paymentUrl": "https://pay.kirapay.com/pay_abc123",
+  "expiresAt": "2025-09-27T13:00:00Z"
+}
+```
+
+## 🛠️ Development Guide
+
+### Project Structure
+```
+src/
+├── app/                    # Next.js 14 App Router
+│   ├── api/               # API routes
+│   │   ├── subscriptions/ # x402 subscription endpoints  
+│   │   ├── storage/       # Filecoin Lighthouse APIs
+│   │   └── payments/      # KiraPay integration
+│   ├── dashboard/         # Creator dashboard
+│   ├── subscriptions/     # Subscription management
+│   └── storage/           # File upload interface
+├── lib/
+│   ├── x402-subscription-service.ts    # x402 protocol client
+│   ├── lighthouse-storage.ts           # Filecoin storage SDK  
+│   ├── kirapay-integration.ts          # Payment processing
+│   ├── wallet-config.ts                # Polygon Amoy config
+│   └── subscription-plans.ts           # Plan definitions
+└── components/
+    ├── payments/          # Payment UI components
+    ├── storage/           # File upload components  
+    └── subscriptions/     # Subscription management UI
+```
+
+### Key Components
+
+#### x402 Subscription Service
+```typescript
+// src/lib/x402-subscription-service.ts
+import { X402SubscriptionService } from './x402-subscription-service';
+
+const service = new X402SubscriptionService();
+
+// Purchase subscription with real blockchain settlement
+const result = await service.purchaseSubscription(plan, walletClient);
+console.log('Transaction Hash:', result.txHash); // Real Polygon Amoy TX
+```
+
+#### Lighthouse Storage Integration  
+```typescript
+// src/lib/lighthouse-storage.ts
+import lighthouse from '@lighthouse-web3/sdk';
+
+// Upload to Filecoin with encryption
+const response = await lighthouse.uploadEncrypted(
+  file,
+  apiKey,
+  publicKey, 
+  signedMessage
+);
+
+// Access via IPFS gateway
+const url = `https://gateway.lighthouse.storage/ipfs/${response.data.Hash}`;
+```
+
+#### KiraPay Payment Processing
+```typescript
+// src/lib/kirapay-integration.ts
+import { KiraPaySDK } from 'kirapay';
+
+// Multi-chain payment support
+const payment = await KiraPaySDK.createPayment({
+  amount: '5.00',
+  currency: 'USDC',
+  network: 'polygon', // or 'ethereum', 'filecoin'
+  recipient: creatorWallet
+});
+```
 NETWORK=calibration
 
 # Storage Configuration

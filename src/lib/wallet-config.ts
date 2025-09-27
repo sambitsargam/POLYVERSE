@@ -9,6 +9,33 @@ import {
   polygonMumbai
 } from 'wagmi/chains';
 
+// Polygon Amoy Testnet (for x402 subscriptions)
+const polygonAmoy = {
+  id: 80002,
+  name: 'Polygon Amoy',
+  network: 'polygon-amoy',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'POL',
+    symbol: 'POL',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-amoy.polygon.technology'],
+    },
+    public: {
+      http: ['https://rpc-amoy.polygon.technology'],
+    },
+  },
+  blockExplorers: {
+    default: { 
+      name: 'PolygonScan', 
+      url: 'https://amoy.polygonscan.com' 
+    },
+  },
+  testnet: true,
+} as const;
+
 // Custom Filecoin chains (if not available in wagmi/chains)
 const filecoinMainnet = {
   id: 314,
@@ -47,12 +74,13 @@ const filecoinCalibrationTestnet = {
   testnet: true,
 } as const;
 
-// Define chains array
+// Define chains array - Polygon Amoy FIRST for x402 subscriptions
 const chains = [
+  polygonAmoy,           // Primary chain for x402 subscriptions
   filecoinCalibrationTestnet,
+  polygon,               // Polygon Mainnet
   filecoinMainnet,
   mainnet, 
-  polygon, 
   optimism, 
   arbitrum, 
   base,
@@ -66,3 +94,6 @@ export const config = getDefaultConfig({
   chains,
   ssr: true,
 });
+
+// Export Polygon Amoy for x402 subscriptions
+export { polygonAmoy };
