@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, LinkIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { SubscriptionTier, Product } from '@/lib/types';
 import { showToast } from './Toast';
 import { createPaymentLink } from '@/lib/kirapay-api';
@@ -16,17 +16,19 @@ interface CheckoutModalProps {
   tipAmount?: number;
 }
 
+// Default admin/platform address for receiving payments
+const ADMIN_ADDRESS = '0x1234567890abcdef1234567890abcdef12345678';
+
 export function CheckoutModal({ isOpen, onClose, item, itemType, creatorId, tipAmount }: CheckoutModalProps) {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [step, setStep] = useState<'input' | 'processing' | 'completed' | 'error'>('input');
+  const [step, setStep] = useState<'processing' | 'payment' | 'completed' | 'error'>('processing');
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
-  const [receiverAddress, setReceiverAddress] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      setStep('input');
-      setPaymentLink(null);
-      setReceiverAddress('');
+      // Auto-generate payment link when modal opens
+      handleCreatePaymentLink();
     }
   }, [isOpen, item, tipAmount]);
 
@@ -42,19 +44,15 @@ export function CheckoutModal({ isOpen, onClose, item, itemType, creatorId, tipA
   };
 
   const handleCreatePaymentLink = async () => {
-    if (!receiverAddress.trim()) {
-      showToast('Please enter a receiver wallet address', 'error');
-      return;
-    }
-
     setIsProcessing(true);
     setStep('processing');
+    setError(null);
 
     try {
       const amount = getDisplayPrice();
       const linkRequest: CreateLinkRequest = {
         currency: 'USDC',
-        receiver: receiverAddress,
+        receiver: ADMIN_ADDRESS, // Auto-populated admin address
         price: amount,
         name: `${getDisplayName()} - ${itemType}`,
         redirectUrl: window.location.origin + '/payment-success'
@@ -62,14 +60,21 @@ export function CheckoutModal({ isOpen, onClose, item, itemType, creatorId, tipA
 
       const response = await createPaymentLink(linkRequest);
       setPaymentLink(response.data.url);
-      setStep('completed');
-      showToast('Payment link created successfully!', 'success');
+      setStep('payment');
+      showToast('Payment link ready!', 'success');
     } catch (error) {
       console.error('Payment link creation failed:', error);
+      setError(error instanceof Error ? error.message : 'Failed to create payment link');
       setStep('error');
-      showToast(error instanceof Error ? error.message : 'Failed to create payment link', 'error');
+      showToast('Failed to create payment link', 'error');
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const openPaymentLink = () => {
+    if (paymentLink) {
+      window.open(paymentLink, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
     }
   };
 
@@ -98,156 +103,136 @@ export function CheckoutModal({ isOpen, onClose, item, itemType, creatorId, tipA
             <div className="sm:flex sm:items-start">
               <div className="w-full">
                 {/* Header */}
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-6">
                   <h3 className="text-lg leading-6 font-medium text-gray-900">
-                    Create Payment Link
+                    Complete Payment
                   </h3>
                   <button
                     onClick={onClose}
-                    className="text-gray-400 hover:text-gray-500 transition-colors"
+                    className="rounded-md text-gray-400 hover:text-gray-600 focus:outline-none"
                   >
                     <XMarkIcon className="h-6 w-6" />
                   </button>
                 </div>
 
-                {/* Content based on step */}
-                {step === 'input' && (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Item
-                      </label>
-                      <p className="text-gray-900 font-semibold">{getDisplayName()}</p>
+                {/* Order Summary */}
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <h4 className="font-medium text-gray-900 mb-2">Order Summary</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Item:</span>
+                      <span className="font-medium">{getDisplayName()}</span>
                     </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Amount
-                      </label>
-                      <p className="text-gray-900 font-semibold">${getDisplayPrice().toFixed(2)} USD</p>
+                    <div className="flex justify-between">
+                      <span>Amount:</span>
+                      <span className="font-medium">${getDisplayPrice().toFixed(2)} USDC</span>
                     </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Receiver Wallet Address *
-                      </label>
-                      <input
-                        type="text"
-                        value={receiverAddress}
-                        onChange={(e) => setReceiverAddress(e.target.value)}
-                        placeholder="0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <p className="text-sm text-gray-500 mt-1">
-                        Enter the wallet address that will receive the payment
-                      </p>
+                    <div className="flex justify-between text-gray-600">
+                      <span>Recipient:</span>
+                      <span className="text-xs font-mono">
+                        {ADMIN_ADDRESS.slice(0, 8)}...{ADMIN_ADDRESS.slice(-6)}
+                      </span>
                     </div>
                   </div>
-                )}
+                </div>
 
-                {step === 'processing' && (
-                  <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Creating payment link...</p>
-                  </div>
-                )}
-
-                {step === 'completed' && paymentLink && (
-                  <div className="space-y-4">
-                    <div className="text-center">
-                      <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
+                {/* Status Content */}
+                <div className="text-center">
+                  {step === 'processing' && (
+                    <div>
+                      <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                       </div>
                       <h4 className="text-lg font-medium text-gray-900 mb-2">
-                        Payment Link Created!
+                        Generating Payment Link...
                       </h4>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Payment Link
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={paymentLink}
-                          readOnly
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm"
-                        />
-                        <button
-                          onClick={() => copyToClipboard(paymentLink)}
-                          className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                        >
-                          Copy
-                        </button>
-                      </div>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Share this link with the payer to complete the transaction
+                      <p className="text-sm text-gray-600">
+                        Please wait while we prepare your secure payment link.
                       </p>
                     </div>
+                  )}
 
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => window.open(paymentLink, '_blank')}
-                        className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-                      >
-                        Open Payment Link
-                      </button>
+                  {step === 'payment' && paymentLink && (
+                    <div>
+                      <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                        <LinkIcon className="h-6 w-6 text-green-600" />
+                      </div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">
+                        Payment Link Ready!
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-6">
+                        Your payment link has been generated. Click below to open the secure payment popup.
+                      </p>
+                      
+                      <div className="space-y-3">
+                        <button
+                          onClick={openPaymentLink}
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
+                        >
+                          Open Payment Window
+                        </button>
+                        
+                        <button
+                          onClick={() => copyToClipboard(paymentLink)}
+                          className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+                        >
+                          Copy Payment Link
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 'completed' && (
+                    <div>
+                      <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                        <CheckCircleIcon className="h-6 w-6 text-green-600" />
+                      </div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">
+                        Payment Completed!
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Thank you for your purchase. You should receive a confirmation shortly.
+                      </p>
                       <button
                         onClick={onClose}
-                        className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+                        className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
                       >
                         Close
                       </button>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {step === 'error' && (
-                  <div className="text-center py-8">
-                    <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
+                  {step === 'error' && (
+                    <div>
+                      <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                        <ExclamationTriangleIcon className="h-6 w-6 text-red-600" />
+                      </div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">
+                        Payment Error
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-4">
+                        {error || 'Something went wrong while processing your payment.'}
+                      </p>
+                      <div className="space-y-3">
+                        <button
+                          onClick={handleCreatePaymentLink}
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
+                        >
+                          Try Again
+                        </button>
+                        <button
+                          onClick={onClose}
+                          className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </div>
-                    <h4 className="text-lg font-medium text-gray-900 mb-2">
-                      Payment Link Creation Failed
-                    </h4>
-                    <p className="text-gray-600 mb-4">
-                      Please check your inputs and try again.
-                    </p>
-                    <button
-                      onClick={() => setStep('input')}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                    >
-                      Try Again
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Footer */}
-          {step === 'input' && (
-            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button
-                onClick={handleCreatePaymentLink}
-                disabled={isProcessing}
-                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:bg-blue-400"
-              >
-                {isProcessing ? 'Creating...' : 'Create Payment Link'}
-              </button>
-              <button
-                onClick={onClose}
-                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-              >
-                Cancel
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { formatCurrency, formatNumber, calculateMRR, getActiveSubscribers, getTo
 import { SmallLineChart } from '@/components/SmallLineChart';
 import { FileUploader } from '@/components/FileUploader';
 import { useWallet } from '@/lib/wallet';
+import { SynapseService, defaultSynapseConfig } from '@/lib/synapse-service';
 
 interface UploadedFile {
   cid: string
@@ -33,6 +34,7 @@ export default function DashboardPage() {
     description: '',
     name: ''
   });
+  const [synapseService, setSynapseService] = useState<SynapseService | null>(null);
   
   // Get wallet context
   const { isConnected, address } = useWallet();
@@ -40,8 +42,24 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const creatorsRes = await fetch('/data/creators.json');
-        const creatorsData = await creatorsRes.json();
+        // Mock data for demo - replace with Synapse SDK data fetching
+        const creatorsData: Creator[] = [
+          {
+            id: '1',
+            handle: 'creator1',
+            name: 'Demo Creator',
+            avatar: '/api/placeholder/40/40',
+            banner: '/api/placeholder/800/200',
+            bio: 'Digital content creator using Filecoin storage',
+            category: 'Technology',
+            followers: 1250,
+            isVerified: true,
+            createdAt: new Date().toISOString(),
+            socialLinks: {},
+            subscriptionTiers: []
+          }
+        ];
+        
         const purchases = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
         
         setCreators(creatorsData);

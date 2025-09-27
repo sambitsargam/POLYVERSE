@@ -27,16 +27,40 @@ export default function HomePage() {
     creatorId: '',
   });
 
-    useEffect(() => {
+  useEffect(() => {
     const loadData = async () => {
       try {
-        const [creatorsRes, productsRes] = await Promise.all([
-          fetch('/data/creators.json'),
-          fetch('/data/products.json')
-        ]);
+        // Mock data for demo - replace with Synapse SDK data fetching
+        const creatorsData: Creator[] = [
+          {
+            id: '1',
+            handle: 'creator1',
+            name: 'Demo Creator',
+            avatar: '/api/placeholder/40/40',
+            banner: '/api/placeholder/800/200',
+            bio: 'Digital content creator using Filecoin storage',
+            category: 'Technology',
+            followers: 1250,
+            isVerified: true,
+            createdAt: new Date().toISOString(),
+            socialLinks: {},
+            subscriptionTiers: []
+          }
+        ];
         
-        const creatorsData = await creatorsRes.json();
-        const productsData = await productsRes.json();
+        const productsData: Product[] = [
+          {
+            id: '1',
+            creatorId: '1',
+            title: 'Premium Content Pack',
+            description: 'High-quality digital content stored on Filecoin',
+            priceUSD: 25.99,
+            type: 'digital_art',
+            image: '/api/placeholder/300/200',
+            downloadUrl: '',
+            createdAt: new Date().toISOString()
+          }
+        ];
         
         setCreators(creatorsData);
         setProducts(productsData);

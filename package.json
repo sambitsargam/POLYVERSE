@@ -11,6 +11,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@filoz/synapse-sdk": "^0.28.0",
     "@heroicons/react": "^2.0.18",
     "@lighthouse-web3/sdk": "^0.4.2",
     "axios": "^1.12.2",
