@@ -91,6 +91,10 @@ export default function RegisterPage() {
       }
       
       setProfile(userProfile)
+      
+      // Also explicitly save to localStorage as backup
+      localStorage.setItem('polyverse_user_profile', JSON.stringify(userProfile))
+      
       setSuccess(true)
       setFormData({ handle: '', name: '', bio: '', avatar: '', coverImage: '' })
     } catch (error) {
@@ -108,7 +112,7 @@ export default function RegisterPage() {
           <div className="max-w-2xl mx-auto text-center">
             <div className="bg-green-600 p-8 rounded-xl mb-8">
               <h1 className="text-4xl font-bold mb-4">🎉 Registration Successful!</h1>
-              <p className="text-xl">Welcome to the Polyverse creator community, @{formData.handle}!</p>
+              <p className="text-xl">Welcome to the Polyverse creator community, @{profile?.handle}!</p>
             </div>
             
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8">

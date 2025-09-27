@@ -1,37 +1,83 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
+import { contractService } from '@/lib/contract-service';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+
+interface Product {
+  id: number;
+  creator: string;
+  title: string;
+  description: string;
+  priceUSD: number;
+  contentHash: string;
+  productType: string;
+  isActive: boolean;
+  purchaseCount: number;
+  createdAt: number;
+}
 
 export default function Marketplace() {
+  const { address, isConnected } = useAccount();
   const [searchQuery, setSearchQuery] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const mockNFTs = [
-    {
-      id: 1,
-      title: "Digital Art #001",
-      creator: "ArtistWallet",
-      price: "0.5 FIL",
-      description: "Beautiful digital artwork on Filecoin network"
-    },
-    {
-      id: 2,
-      title: "Music NFT Collection", 
-      creator: "MusicCreator",
-      price: "1.2 FIL",
-      description: "Exclusive music collection with utility"
-    },
-    {
-      id: 3,
-      title: "Photography Series",
-      creator: "PhotoPro", 
-      price: "0.8 FIL",
-      description: "Limited edition photography series"
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      // For now, we'll show a message that products need to be fetched
+      // In a real implementation, you'd need to:
+      // 1. Get all product IDs from the contract
+      // 2. Fetch each product's details
+      // 3. Filter active products
+      
+      // This is a placeholder - the contract would need an additional function
+      // to get all products or we'd need to implement an indexing solution
+      setProducts([]);
+      
+    } catch (err: any) {
+      console.error('Error loading products:', err);
+      setError('Failed to load products from blockchain');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const filteredNFTs = mockNFTs.filter(nft =>
-    nft.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    nft.creator.toLowerCase().includes(searchQuery.toLowerCase())
+  const handlePurchase = async (product: Product) => {
+    if (!isConnected) {
+      alert('Please connect your wallet to purchase');
+      return;
+    }
+
+    try {
+      // Implement purchase logic using contractService.purchaseProduct
+      console.log('Purchasing product:', product);
+      alert('Purchase functionality will be implemented with payment tokens');
+    } catch (error) {
+      console.error('Purchase failed:', error);
+      alert('Purchase failed');
+    }
+  };
+
+  const formatProductType = (type: string) => {
+    return type.replace('_', ' ').split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
+  const filteredProducts = products.filter(product =>
+    product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.creator.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.productType.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (

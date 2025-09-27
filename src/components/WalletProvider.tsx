@@ -8,12 +8,16 @@ import { config } from '@/lib/wallet-config';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
-// Create a stable query client instance
+// Create a stable query client instance with better persistence
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000, // 1 minute
-      retry: 3,
+      staleTime: 5 * 60 * 1000, // 5 minutes - longer cache time
+      gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
+      retry: 1, // Reduce retries to prevent connection spam
+      refetchOnWindowFocus: false, // Don't refetch on tab focus (key fix!)
+      refetchOnMount: false, // Don't refetch on component mount
+      refetchInterval: false, // Disable auto refetch
     },
   },
 });
@@ -29,8 +33,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
             borderRadius: 'medium',
           })}
           showRecentTransactions={true}
-          modalSize="compact"
-          initialChain={config.chains[0]}
         >
           {children}
         </RainbowKitProvider>

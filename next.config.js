@@ -3,24 +3,29 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com', 'via.placeholder.com'],
   },
+  experimental: {
+    esmExternals: 'loose'
+  },
   webpack: (config, { isServer, webpack }) => {
-    // Handle React Native dependencies that don't work in browser
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      '@react-native-async-storage/async-storage': false,
-      'pino-pretty': false,
-      'fs': false,
-      'net': false,
-      'tls': false,
-      'crypto': require.resolve('crypto-browserify'),
-      'stream': require.resolve('stream-browserify'),
-      'url': require.resolve('url/'),
-      'zlib': require.resolve('browserify-zlib'),
-      'http': require.resolve('stream-http'),
-      'https': require.resolve('https-browserify'),
-      'assert': require.resolve('assert/'),
-      'os': require.resolve('os-browserify/browser'),
-      'path': require.resolve('path-browserify'),
+    if (!isServer) {
+      // Client-side configuration
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        '@react-native-async-storage/async-storage': false,
+        'pino-pretty': false,
+        'fs': false,
+        'net': false,
+        'tls': false,
+        'crypto': require.resolve('crypto-browserify'),
+        'stream': require.resolve('stream-browserify'),
+        'url': require.resolve('url/'),
+        'zlib': require.resolve('browserify-zlib'),
+        'http': require.resolve('stream-http'),
+        'https': require.resolve('https-browserify'),
+        'assert': require.resolve('assert/'),
+        'os': require.resolve('os-browserify/browser'),
+        'path': require.resolve('path-browserify'),
+      }
     }
 
     // Ignore React Native and Node.js specific modules

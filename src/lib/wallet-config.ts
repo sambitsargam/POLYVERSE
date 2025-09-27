@@ -22,14 +22,11 @@ const filecoinMainnet = {
     default: {
       http: ['https://api.node.glif.io'],
     },
-    public: {
-      http: ['https://api.node.glif.io'],
-    },
   },
   blockExplorers: {
     default: { name: 'FileScan', url: 'https://filfox.info/en' },
   },
-};
+} as const;
 
 const filecoinCalibrationTestnet = {
   id: 314159,
@@ -43,15 +40,12 @@ const filecoinCalibrationTestnet = {
     default: {
       http: ['https://api.calibration.node.glif.io/rpc/v1'],
     },
-    public: {
-      http: ['https://api.calibration.node.glif.io/rpc/v1'],
-    },
   },
   blockExplorers: {
     default: { name: 'FileScan', url: 'https://calibration.filfox.info/en' },
   },
   testnet: true,
-};
+} as const;
 
 export const config = getDefaultConfig({
   appName: 'Polyverse Creator Storefront',
@@ -68,6 +62,4 @@ export const config = getDefaultConfig({
     polygonMumbai
   ],
   ssr: true,
-  storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-  multiInjectedProviderDiscovery: true,
 });
