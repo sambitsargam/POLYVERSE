@@ -11,7 +11,6 @@ import { showToast } from '@/components/Toast';
 const MARKETPLACE_CONFIG = {
   REGISTRATION_FEE: 5.0, // $5 to register a product
   FEATURING_FEE: 15.0,   // $15 to feature a product at the top
-  LISTING_FEE_FIL: 1.0,  // 1 FIL listing charge for content creation
   CONTRACT_CREATOR: '0xF846d2747D1cb33635Cc66dD6D513d85Cb830f13', // Receives all fees
 };
 
@@ -310,38 +309,6 @@ export default function Marketplace() {
     }
   }
 
-  const handleListingFee = async () => {
-    if (!isConnected || !address) {
-      showToast('Please connect your wallet to pay listing fee', 'error')
-      return
-    }
-
-    try {
-      const paymentData = {
-        currency: 'FIL',
-        receiver: MARKETPLACE_CONFIG.CONTRACT_CREATOR,
-        price: MARKETPLACE_CONFIG.LISTING_FEE_FIL,
-        name: `Listing Fee - Create Content`,
-        redirectUrl: `${window.location.origin}/create?listing_fee_paid=true`
-      }
-
-      const paymentLink = await createPaymentLink(paymentData)
-      
-      if (paymentLink?.data?.url) {
-        setPaymentModal({
-          isOpen: true,
-          url: paymentLink.data.url,
-          productTitle: 'Content Creation Listing Fee (1 FIL)'
-        })
-        showToast('Listing fee payment opened! Complete payment to create content.', 'success')
-      } else {
-        showToast('Failed to create payment link. Please try again.', 'error')
-      }
-    } catch (error) {
-      showToast('Failed to initiate listing fee payment.', 'error')
-    }
-  }
-
   const formatProductType = (type: string) => {
     return type.replace('_', ' ').split(' ').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
@@ -613,69 +580,15 @@ export default function Marketplace() {
                   </div>
                 ) : (
                   <div>
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Create Content</h3>
-                      <p className="text-sm text-gray-500 mb-4">
-                        Share your content with the world on the decentralized web
-                      </p>
-                      
-                      {/* 4-Step Process */}
-                      <div className="flex items-center justify-between mb-6 p-4 bg-gray-50 rounded-lg">
-                        <div className="flex items-center text-center">
-                          <div className="flex flex-col items-center">
-                            <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold mb-2">
-                              1
-                            </div>
-                            <span className="text-xs text-gray-600">Upload</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex-1 h-px bg-gray-300 mx-2"></div>
-                        
-                        <div className="flex items-center text-center">
-                          <div className="flex flex-col items-center">
-                            <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold mb-2">
-                              2
-                            </div>
-                            <span className="text-xs text-gray-600">Details</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex-1 h-px bg-gray-300 mx-2"></div>
-                        
-                        <div className="flex items-center text-center">
-                          <div className="flex flex-col items-center">
-                            <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold mb-2">
-                              3
-                            </div>
-                            <span className="text-xs text-gray-600">Pricing</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex-1 h-px bg-gray-300 mx-2"></div>
-                        
-                        <div className="flex items-center text-center">
-                          <div className="flex flex-col items-center">
-                            <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold mb-2">
-                              4
-                            </div>
-                            <span className="text-xs text-gray-600">Publish</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <button
-                        onClick={handleListingFee}
-                        className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                      >
-                        Create Content (1 FIL listing fee)
-                      </button>
-                      <p className="text-xs text-gray-400">
-                        A 1 FIL listing fee is required to create content on the marketplace
-                      </p>
-                    </div>
+                    <p className="text-sm text-gray-500 mb-4">
+                      Be the first to create content on the platform!
+                    </p>
+                    <a 
+                      href="/create" 
+                      className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                    >
+                      Create Content
+                    </a>
                   </div>
                 )}
               </div>

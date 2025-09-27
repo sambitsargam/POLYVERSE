@@ -101,16 +101,17 @@ export default function CreateContent() {
     setSuccess('')
 
     try {
-      console.log('🚀 Creating product on blockchain...', {
+      console.log('🚀 Creating product on blockchain with 1 FIL listing fee...', {
         title,
         description,
         priceUSD: priceValue,
         contentHash,
         productType,
-        creator: address
+        creator: address,
+        listingFee: '1 FIL'
       })
 
-      // Create product on the smart contract
+      // Create product on the smart contract (includes 1 FIL listing fee)
       const receipt = await contractService.createProduct(
         title,
         description,
@@ -120,7 +121,7 @@ export default function CreateContent() {
       )
 
       console.log('✅ Product created successfully!', receipt)
-      setSuccess(`Product "${title}" created successfully!`)
+      setSuccess(`Product "${title}" created successfully! Listing fee of 1 FIL has been charged.`)
       
       // Reset form after successful creation
       setTimeout(() => {
@@ -382,6 +383,11 @@ export default function CreateContent() {
                 <p><strong>IPFS Hash:</strong> {contentHash}</p>
                 <p><strong>File:</strong> {uploadedFile?.name}</p>
               </div>
+              <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-md">
+                <h3 className="font-medium mb-2 text-yellow-800">Listing Fee</h3>
+                <p className="text-yellow-700">A listing fee of <strong>1 FIL</strong> will be charged to publish your content on the marketplace.</p>
+                <p className="text-sm text-yellow-600 mt-2">This fee helps maintain the platform and ensures quality content.</p>
+              </div>
               <div className="flex space-x-4">
                 <button
                   onClick={() => setStep(3)}
@@ -400,7 +406,7 @@ export default function CreateContent() {
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                   )}
-                  {loading ? 'Publishing...' : 'Publish Content'}
+                  {loading ? 'Publishing & Paying Fee...' : 'Publish Content (1 FIL Fee)'}
                 </button>
               </div>
             </div>

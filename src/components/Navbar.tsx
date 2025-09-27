@@ -28,6 +28,12 @@ export const Navbar = () => {
             <Link href="/marketplace" className="text-gray-700 hover:text-primary transition-colors">
               Marketplace
             </Link>
+            <Link href="/subscriptions" className="text-gray-700 hover:text-primary transition-colors">
+              Subscriptions
+            </Link>
+            <Link href="/subscriptions/premium" className="text-gray-700 hover:text-primary transition-colors">
+              Premium Content
+            </Link>
             <Link href="/register" className="text-gray-700 hover:text-primary transition-colors">
               Become Creator
             </Link>
@@ -80,6 +86,20 @@ export const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Marketplace
+            </Link>
+            <Link
+              href="/subscriptions"
+              className="block text-gray-700 hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Subscriptions
+            </Link>
+            <Link
+              href="/subscriptions/premium"
+              className="block text-gray-700 hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Premium Content
             </Link>
             <Link
               href="/register"
