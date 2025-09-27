@@ -4,14 +4,8 @@ import { useState, useEffect } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { SubscriptionTier, Product } from '@/lib/types';
 import { showToast } from './Toast';
-import { useWallet } from '@/lib/wallet';
-
-// TODO: Implement KiraPay integration
-interface KiraPayConfig {
-  apiKey: string;
-  baseUrl: string;
-  supportedTokens: string[];
-}
+import { createPaymentLink } from '@/lib/kirapay-api';
+import { CreateLinkRequest } from '@/types/kirapay';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -23,68 +17,18 @@ interface CheckoutModalProps {
 }
 
 export function CheckoutModal({ isOpen, onClose, item, itemType, creatorId, tipAmount }: CheckoutModalProps) {
-  const { isConnected, address, connectWallet } = useWallet();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [step, setStep] = useState<'select' | 'processing' | 'completed' | 'error'>('select');
-
-  // TODO: Initialize KiraPay SDK
-  const [kiraPayConfig, setKiraPayConfig] = useState<KiraPayConfig | null>(null);
+  const [step, setStep] = useState<'input' | 'processing' | 'completed' | 'error'>('input');
+  const [paymentLink, setPaymentLink] = useState<string | null>(null);
+  const [receiverAddress, setReceiverAddress] = useState<string>('');
 
   useEffect(() => {
     if (isOpen) {
-      setStep('select');
-      // TODO: Load KiraPay configuration
-      setKiraPayConfig({
-        apiKey: process.env.NEXT_PUBLIC_KIRAPAY_API_KEY || '',
-        baseUrl: process.env.NEXT_PUBLIC_KIRAPAY_BASE_URL || '',
-        supportedTokens: ['USDC', 'USDT', 'ETH', 'MATIC']
-      });
+      setStep('input');
+      setPaymentLink(null);
+      setReceiverAddress('');
     }
-  }, [isOpen]);
-
-  const handlePayment = async () => {
-    if (!isConnected || !address) {
-      await connectWallet();
-      return;
-    }
-
-    if (!item) return;
-
-    setIsProcessing(true);
-    setStep('processing');
-
-    try {
-      // TODO: Implement KiraPay payment processing
-      const paymentAmount = itemType === 'tip' ? tipAmount : item.priceUSD;
-      
-      console.log('TODO: KiraPay payment processing:', {
-        amount: paymentAmount,
-        recipient: creatorId,
-        payer: address,
-        itemType,
-        itemName: 'title' in item ? item.title : 'name' in item ? item.name : 'Tip'
-      });
-
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      setStep('completed');
-      showToast('Payment successful!', 'success');
-      
-      setTimeout(() => {
-        onClose();
-      }, 2000);
-
-    } catch (error) {
-      console.error('Payment failed:', error);
-      setStep('error');
-      showToast('Payment failed. Please try again.', 'error');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  if (!isOpen) return null;
+  }, [isOpen, item, tipAmount]);
 
   const getDisplayPrice = () => {
     return itemType === 'tip' ? tipAmount || 0 : item?.priceUSD || 0;
@@ -97,109 +41,210 @@ export function CheckoutModal({ isOpen, onClose, item, itemType, creatorId, tipA
     return 'Item';
   };
 
+  const handleCreatePaymentLink = async () => {
+    if (!receiverAddress.trim()) {
+      showToast('Please enter a receiver wallet address', 'error');
+      return;
+    }
+
+    setIsProcessing(true);
+    setStep('processing');
+
+    try {
+      const amount = getDisplayPrice();
+      const linkRequest: CreateLinkRequest = {
+        currency: 'USDC',
+        receiver: receiverAddress,
+        price: amount,
+        name: `${getDisplayName()} - ${itemType}`,
+        redirectUrl: window.location.origin + '/payment-success'
+      };
+
+      const response = await createPaymentLink(linkRequest);
+      setPaymentLink(response.data.url);
+      setStep('completed');
+      showToast('Payment link created successfully!', 'success');
+    } catch (error) {
+      console.error('Payment link creation failed:', error);
+      setStep('error');
+      showToast(error instanceof Error ? error.message : 'Failed to create payment link', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    showToast('Payment link copied to clipboard!', 'success');
+  };
+
+  if (!isOpen) return null;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Checkout</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <XMarkIcon className="w-6 h-6" />
-            </button>
-          </div>
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        {/* Background overlay */}
+        <div
+          className="fixed inset-0 transition-opacity"
+          aria-hidden="true"
+          onClick={onClose}
+        >
+          <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
 
-          {step === 'select' && (
-            <div className="space-y-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="font-medium text-lg">{getDisplayName()}</h3>
-                <p className="text-gray-600 mt-1">
-                  {itemType === 'subscription' && item && 'interval' in item 
-                    ? `$${getDisplayPrice()}/month` 
-                    : `$${getDisplayPrice()}`}
-                </p>
-              </div>
-
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <div className="text-gray-500 mb-4">
-                  <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-2xl">🚀</span>
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">KiraPay Integration</h3>
-                  <p className="text-sm">
-                    TODO: Implement KiraPay payment processing
-                  </p>
-                </div>
-                
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
-                  <h4 className="font-semibold text-blue-900 mb-2">Integration Features:</h4>
-                  <ul className="text-sm text-blue-800 space-y-1">
-                    <li>• Multi-token payment support</li>
-                    <li>• Cross-chain transactions</li>
-                    <li>• Real-time payment processing</li>
-                    <li>• Automatic token conversion</li>
-                    <li>• Creator payout management</li>
-                  </ul>
-                </div>
-              </div>
-
-              {!isConnected ? (
-                <button
-                  onClick={connectWallet}
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                >
-                  Connect Wallet to Continue
-                </button>
-              ) : (
-                <div className="space-y-4">
-                  <div className="text-sm text-gray-600">
-                    Connected: {address?.slice(0, 6)}...{address?.slice(-4)}
-                  </div>
-                  
+        {/* Modal */}
+        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div className="sm:flex sm:items-start">
+              <div className="w-full">
+                {/* Header */}
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    Create Payment Link
+                  </h3>
                   <button
-                    onClick={handlePayment}
-                    disabled={isProcessing}
-                    className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:bg-gray-400"
+                    onClick={onClose}
+                    className="text-gray-400 hover:text-gray-500 transition-colors"
                   >
-                    {isProcessing ? 'Processing...' : `Pay $${getDisplayPrice()} with KiraPay`}
+                    <XMarkIcon className="h-6 w-6" />
                   </button>
                 </div>
-              )}
-            </div>
-          )}
 
-          {step === 'processing' && (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <h3 className="text-lg font-semibold mb-2">Processing Payment</h3>
-              <p className="text-gray-600">Please wait while we process your payment through KiraPay...</p>
-            </div>
-          )}
+                {/* Content based on step */}
+                {step === 'input' && (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Item
+                      </label>
+                      <p className="text-gray-900 font-semibold">{getDisplayName()}</p>
+                    </div>
 
-          {step === 'completed' && (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">✅</span>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Amount
+                      </label>
+                      <p className="text-gray-900 font-semibold">${getDisplayPrice().toFixed(2)} USD</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Receiver Wallet Address *
+                      </label>
+                      <input
+                        type="text"
+                        value={receiverAddress}
+                        onChange={(e) => setReceiverAddress(e.target.value)}
+                        placeholder="0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <p className="text-sm text-gray-500 mt-1">
+                        Enter the wallet address that will receive the payment
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {step === 'processing' && (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">Creating payment link...</p>
+                  </div>
+                )}
+
+                {step === 'completed' && paymentLink && (
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">
+                        Payment Link Created!
+                      </h4>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Payment Link
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={paymentLink}
+                          readOnly
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm"
+                        />
+                        <button
+                          onClick={() => copyToClipboard(paymentLink)}
+                          className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                        >
+                          Copy
+                        </button>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Share this link with the payer to complete the transaction
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => window.open(paymentLink, '_blank')}
+                        className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                      >
+                        Open Payment Link
+                      </button>
+                      <button
+                        onClick={onClose}
+                        className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {step === 'error' && (
+                  <div className="text-center py-8">
+                    <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </div>
+                    <h4 className="text-lg font-medium text-gray-900 mb-2">
+                      Payment Link Creation Failed
+                    </h4>
+                    <p className="text-gray-600 mb-4">
+                      Please check your inputs and try again.
+                    </p>
+                    <button
+                      onClick={() => setStep('input')}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                )}
               </div>
-              <h3 className="text-lg font-semibold mb-2">Payment Successful!</h3>
-              <p className="text-gray-600">Your payment has been processed successfully.</p>
             </div>
-          )}
+          </div>
 
-          {step === 'error' && (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">❌</span>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Payment Failed</h3>
-              <p className="text-gray-600 mb-4">There was an error processing your payment.</p>
+          {/* Footer */}
+          {step === 'input' && (
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
               <button
-                onClick={() => setStep('select')}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                onClick={handleCreatePaymentLink}
+                disabled={isProcessing}
+                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:bg-blue-400"
               >
-                Try Again
+                {isProcessing ? 'Creating...' : 'Create Payment Link'}
+              </button>
+              <button
+                onClick={onClose}
+                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+              >
+                Cancel
               </button>
             </div>
           )}
