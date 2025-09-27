@@ -2,12 +2,15 @@
 
 import { WalletProvider } from '@/components/WalletProvider'
 import { UserProvider } from '@/contexts/UserContext'
+import { PolyverseHypergraphProvider } from '@/hypergraph/provider'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WalletProvider>
       <UserProvider>
-        {children}
+        <PolyverseHypergraphProvider>
+          {children}
+        </PolyverseHypergraphProvider>
       </UserProvider>
     </WalletProvider>
   )

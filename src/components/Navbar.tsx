@@ -43,6 +43,9 @@ export const Navbar = () => {
             <Link href="/dashboard" className="text-gray-700 hover:text-primary transition-colors">
               Dashboard
             </Link>
+            <Link href="/demo/hypergraph" className="text-purple-600 hover:text-purple-700 transition-colors font-medium">
+              🧠 Hypergraph Demo
+            </Link>
           </div>
 
           {/* Right side */}
@@ -121,6 +124,13 @@ export const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Dashboard
+            </Link>
+            <Link
+              href="/demo/hypergraph"
+              className="block text-purple-600 hover:text-purple-700 transition-colors font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              🧠 Hypergraph Demo
             </Link>
             <div className="pt-4 border-t border-gray-100">
               <div className="flex justify-center">
